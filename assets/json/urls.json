@@ -1,0 +1,9 @@
+{
+  "video": {
+    "curb_your_enthusiasm": "https://cdn.discordapp.com/attachments/834339693863632928/943097481246421033/curb_your_enthusiasm.mp4",
+    "average": "https://cdn.discordapp.com/attachments/834339693863632928/943097481674260510/average.mp4"
+  },
+  "audio": {
+    "curb_your_enthusiasm": "https://cdn.discordapp.com/attachments/834339693863632928/943097480822784041/curb_your_enthusiasm.mp3"
+  }
+}

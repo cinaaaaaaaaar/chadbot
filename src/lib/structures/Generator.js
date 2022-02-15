@@ -8,9 +8,6 @@ class VideoGenerator {
     const DeveloperKey = defaultClient.authentications["DeveloperKey"];
     DeveloperKey.apiKey = token;
     defaultClient.basePath = basePath;
-    Object.entries(Shotstack).forEach((entry) => {
-      this[entry[0]] = entry[1];
-    });
     this.api = new Shotstack.EditApi();
   }
 }
@@ -20,7 +17,7 @@ class Generator {
     this.client = client;
     this.size = Object.keys(this.__proto__).length;
     this.video = new VideoGenerator(
-      process.env.SHOTSTACK_TOKEN,
+      process.env.SHOTSTACK_STAGE_TOKEN,
       "https://api.shotstack.io/stage"
     );
   }

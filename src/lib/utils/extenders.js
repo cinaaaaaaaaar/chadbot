@@ -3,6 +3,7 @@ const { CommandInteraction } = require("discord.js");
 global.request = require("node-superfetch");
 global._ = require("lodash");
 global.ms = require("ms");
+global.wait = require("util").promisify(setTimeout);
 
 CommandInteraction.prototype.error = async function (error) {
   const content = {
@@ -16,6 +17,13 @@ CommandInteraction.prototype.error = async function (error) {
   };
   if (this.deferred) return this.editReply(content);
   else return this.reply(content);
+};
+
+String.prototype.wrap = function (width) {
+  return this.replace(
+    new RegExp(`(?![^\\n]{1,${width}}$)([^\\n]{1,${width}})\\s`, "g"),
+    "$1\n"
+  );
 };
 
 String.prototype.toNumber = function () {
