@@ -2,6 +2,7 @@ const { MessageAttachment } = require("discord.js");
 const NLEmbed = require("./NLEmbed");
 const Shotstack = require("shotstack-sdk");
 const { get } = require("node-superfetch");
+const wait = require("util").promisify(setTimeout);
 class Generator {
   constructor(client) {
     this.client = client;
@@ -16,9 +17,8 @@ class Generator {
     const render = await api.postRender(data);
     let status = await api.getRender(render.response.id);
     while (status.response.status !== "done") {
-      setTimeout(async () => {
-        status = await api.getRender(render.response.id);
-      }, 5000);
+      await wait(5000);
+      status = await api.getRender(render.response.id);
     }
     return (await api.getRender(render.response.id)).response.url;
   }

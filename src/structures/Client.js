@@ -121,8 +121,8 @@ class BaseClient extends Client {
     folders.forEach((folder) => {
       const assets = readdirSync(`./assets/${folder}`);
       assets.forEach((asset) => {
-        this[folder] = new Object();
-        this[folder][
+        this.assets[folder] = new Object();
+        this.assets[folder][
           asset.split(".")[0]
         ] = require(`../../assets/${folder}/${asset}`);
       });
