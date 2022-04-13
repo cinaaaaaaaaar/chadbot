@@ -14,7 +14,6 @@ const client = new Client({
   allowedMentions: { parse: ["users"], repliedUser: false },
 });
 
-
 module.exports = {
   Command: require("./structures/commands/Command"),
   NLEmbed: require("./structures/NLEmbed"),
