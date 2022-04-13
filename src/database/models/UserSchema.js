@@ -5,11 +5,6 @@ const number = {
 };
 const Schema = new mongoose.Schema({
   _id: String,
-  coins: {
-    wallet: number,
-    vault: number,
-  },
-  inv: Array,
   blacklisted: {
     type: Boolean,
     default: false,

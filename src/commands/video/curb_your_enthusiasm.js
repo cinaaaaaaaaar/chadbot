@@ -1,4 +1,4 @@
-const Client = require("../../lib/NLClient");
+const Client = require("../../structures/Client");
 const { Command } = require("../..");
 const { CommandInteraction, MessageAttachment } = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
@@ -45,6 +45,8 @@ class CurbYourEnthusiasmCommand extends Command {
    * @param {Array} options
    */
   async run(client, interaction, options) {
+    const videoAsset = client.assets.json.urls.video.curb_your_enthusiasm;
+    const audioAsset = client.assets.json.urls.audio.curb_your_enthusiasm;
     const url = client.utils.getImage(interaction, options);
     const fileType = url.split(/[#?]/)[0].split(".").pop().trim();
     const supportedFormats = {
@@ -69,7 +71,7 @@ class CurbYourEnthusiasmCommand extends Command {
     if (type === "video" && length > (await getLength(url)))
       return interaction.error("Duration is longer than source asset");
 
-    const edit = {
+    const data = {
       output: {
         format: "mp4",
         size: {
@@ -94,22 +96,18 @@ class CurbYourEnthusiasmCommand extends Command {
               {
                 asset: {
                   type: "video",
-                  src: client.json.urls.video.curb_your_enthusiasm,
+                  src: videoAsset,
                 },
-                length: await getLength(
-                  client.json.urls.video.curb_your_enthusiasm
-                ),
+                length: await getLength(videoAsset),
                 start: length,
               },
               {
                 asset: {
                   type: "audio",
-                  src: client.json.urls.audio.curb_your_enthusiasm,
+                  src: audioAsset,
                 },
-                length: await getLength(
-                  client.json.urls.audio.curb_your_enthusiasm
-                ),
-                start: length - 2,
+                length: await getLength(audioAsset),
+                start: length - (length * 2) / 10,
               },
             ],
           },
@@ -117,17 +115,8 @@ class CurbYourEnthusiasmCommand extends Command {
       },
     };
 
-    const api = client.generator.video.api;
-    const render = await api.postRender(edit);
-    let status = await api.getRender(render.response.id);
-    while (status.response.status !== "done") {
-      await wait(5000);
-      status = await api.getRender(render.response.id);
-    }
-    const video = new MessageAttachment(
-      (await api.getRender(render.response.id)).response.url,
-      "curb_your_enthusiasm.mp4"
-    );
+    const render = await client.generator.render(data);
+    const video = new MessageAttachment(render, "curb_your_enthusiasm.mp4");
     interaction.editReply({ files: [video] });
   }
 }

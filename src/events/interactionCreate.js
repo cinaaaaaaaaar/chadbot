@@ -9,7 +9,15 @@ module.exports = async (client, interaction) => {
     if (subcommand)
       command.data.options
         .find((x) => x.name == subcommand)
-        .run(client, interaction, options);
-    else command.run(client, interaction, options);
+        .run(client, interaction, options)
+        .catch((error) => {
+          console.error(error);
+          interaction.editReply("An error occured during execution");
+        });
+    else
+      command.run(client, interaction, options).catch((error) => {
+        console.error(error);
+        interaction.editReply("An error occured during execution");
+      });
   }
 };

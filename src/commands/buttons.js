@@ -1,4 +1,4 @@
-const Client = require("../lib/NLClient");
+const Client = require("../structures/Client");
 const { Command } = require("../..");
 const {
   MessageButton,

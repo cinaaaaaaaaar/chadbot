@@ -1,4 +1,4 @@
-const Client = require("../../lib/NLClient");
+const Client = require("../../structures/Client");
 const { Command } = require("../..");
 const { CommandInteraction } = require("discord.js");
 class ChatbotChannelCommand extends Command {
@@ -36,13 +36,17 @@ class ChatbotChannelCommand extends Command {
       return interaction.editReply(`Please input a text channel`);
     if (options[1]) {
       client.database.push(
-        `guilds.${interaction.guild.id}.aiChannels`,
+        "guilds",
+        interaction.guild.id,
+        "aiChannels",
         channel.id
       );
       interaction.editReply(`I've added ${channel} to the chatbot list.`);
     } else {
       client.database.remove(
-        `guilds.${interaction.guild.id}.aiChannels`,
+        "guilds",
+        interaction.guild.id,
+        "aiChannels",
         channel.id
       );
       interaction.editReply(`I've removed ${channel} from the chatbot list.`);

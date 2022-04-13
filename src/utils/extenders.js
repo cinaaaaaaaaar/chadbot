@@ -1,9 +1,5 @@
-const letters = require("../../../assets/json/flipped");
+const letters = require("../../assets/json/flipped");
 const { CommandInteraction } = require("discord.js");
-global.request = require("node-superfetch");
-global._ = require("lodash");
-global.ms = require("ms");
-global.wait = require("util").promisify(setTimeout);
 
 CommandInteraction.prototype.error = async function (error) {
   const content = {
@@ -33,6 +29,7 @@ String.prototype.toNumber = function () {
   number = parseInt(number.replace("m", "000000"));
   return number;
 };
+
 String.prototype.shuffle = function () {
   let splitted = this.split(""),
     length = splitted.length;
@@ -60,15 +57,6 @@ String.prototype.flip = function () {
   return newStr;
 };
 
-String.prototype.chunks = function () {
-  const array = this.split(".");
-  const schema = array[0],
-    id = array[1],
-    name = array[2],
-    key = array[3];
-  return { schema, id, name, key };
-};
-
 String.prototype.upperFirstChar = function () {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
@@ -87,7 +75,7 @@ Array.prototype.pagify = function (limit) {
 };
 
 Array.prototype.remove = function (value) {
-  return this.filter((x) => x != value);
+  this.filter((x) => x != value);
 };
 
 String.prototype.isURL = function () {

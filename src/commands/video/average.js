@@ -1,4 +1,4 @@
-const Client = require("../../lib/NLClient");
+const Client = require("../../structures/Client");
 const { Command } = require("../..");
 const { CommandInteraction, MessageAttachment } = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
@@ -32,9 +32,9 @@ class AverageCommand extends Command {
   async run(client, interaction, options) {
     if (options[0].length > 32 || options[1].length > 32)
       return interaction.error("Text is longer than 32 characters");
-    const source = client.json.urls.video.average;
+    const source = client.assets.json.urls.video.average;
     const length = await getLength(source);
-    const edit = {
+    const data = {
       output: {
         format: "mp4",
         size: {
@@ -95,17 +95,8 @@ class AverageCommand extends Command {
         ],
       },
     };
-    const api = client.generator.video.api;
-    const render = await api.postRender(edit);
-    let status = await api.getRender(render.response.id);
-    while (status.response.status !== "done") {
-      await wait(5000);
-      status = await api.getRender(render.response.id);
-    }
-    const video = new MessageAttachment(
-      (await api.getRender(render.response.id)).response.url,
-      "average.mp4"
-    );
+    const render = await client.generator.render(data);
+    const video = new MessageAttachment(render, "average.mp4");
     interaction.editReply({ files: [video] });
   }
 }

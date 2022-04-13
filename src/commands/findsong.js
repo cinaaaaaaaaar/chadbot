@@ -1,6 +1,7 @@
-const Client = require("../lib/NLClient");
+const Client = require("../structures/Client");
 const { Command, NLEmbed } = require("..");
 const { CommandInteraction } = require("discord.js");
+const { get } = require("node-superfetch");
 class FindsongCommand extends Command {
   constructor() {
     super({
@@ -35,7 +36,7 @@ class FindsongCommand extends Command {
         "Wrong file type, please provide a mp3 or mp4 file."
       );
     const auddURL = `https://api.audd.io/?api_token=${process.env.AUDD_TOKEN}&url=${url}`;
-    const res = await request.get(auddURL);
+    const res = await get(auddURL);
     if (!res.body.result || res.body.status !== "success")
       return interaction.error("Unknown song.");
     const embed = new NLEmbed()

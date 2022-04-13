@@ -1,5 +1,5 @@
-const Client = require("../lib/NLClient");
-const { Command } = require("../..");
+const Client = require("../structures/Client");
+const { Command } = require("..");
 const { CommandInteraction } = require("discord.js");
 class QuoteCommand extends Command {
   constructor() {
