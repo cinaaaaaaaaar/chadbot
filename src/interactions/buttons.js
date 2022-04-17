@@ -1,10 +1,6 @@
 const Client = require("../structures/Client");
 const { SlashCommand } = require("..");
-const {
-  MessageButton,
-  MessageActionRow,
-  InteractionCollector,
-} = require("discord.js");
+const { MessageButton, MessageActionRow, InteractionCollector } = require("discord.js");
 const styles = {
   Blurple: "PRIMARY",
   Gray: "SECONDARY",
@@ -44,8 +40,7 @@ class ButtonCommand extends SlashCommand {
         },
         {
           name: "code",
-          description:
-            "The code to run when the button is clicked (owner only)",
+          description: "The code to run when the button is clicked (owner only)",
           type: 3,
           required: false,
         },
@@ -81,11 +76,8 @@ class ButtonCommand extends SlashCommand {
       componentType: "BUTTON",
     });
     collector.on("collect", (buttonInteraction) => {
-      if ((buttonInteraction.customId = "custom_button")) {
-        if (
-          options[3] &&
-          client.config.owners.includes(buttonInteraction.user.id)
-        )
+      if (buttonInteraction.customId === "custom_button") {
+        if (options[3] && client.config.owners.includes(buttonInteraction.user.id))
           eval(options[3]);
         else {
           buttonInteraction.reply({

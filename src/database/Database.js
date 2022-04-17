@@ -76,7 +76,7 @@ class Database extends EventEmitter {
   async remove(schema, id, key, value) {
     let current = await this.get(schema, id, key);
     if (!current) return;
-    if ((typeof current === "array") | (current.isMongooseArray == false))
+    if (current.isMongooseArray === false)
       throw new TypeError(`Expected array but got ${typeof current}`);
     current = current.remove(value);
     return await this.set(schema, id, key, uniq(current));

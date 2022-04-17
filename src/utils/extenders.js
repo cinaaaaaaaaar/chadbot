@@ -43,8 +43,8 @@ String.prototype.wrap = function (width) {
 String.prototype.toNumber = function () {
   const regex = /[.,\s]/g;
   const result = this.replace(regex, "");
-  let number = result.replace("k", "000");
-  number = parseInt(number.replace("m", "000000"));
+  let number = result.replace("k", "000").replace("m", "000000");
+  number = parseInt(number);
   return number;
 };
 
