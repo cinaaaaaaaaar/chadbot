@@ -103,7 +103,7 @@ Array.prototype.pagify = function (limit) {
 };
 
 Array.prototype.remove = function (value) {
-  this.filter((x) => x != value);
+  return this.filter((x) => x != value);
 };
 
 String.prototype.isURL = function () {

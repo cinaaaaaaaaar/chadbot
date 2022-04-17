@@ -31,10 +31,7 @@ module.exports = async (client, message) => {
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const commandName = args.shift().toLowerCase();
-  const filter = (cmd) => cmd.name === commandName || cmd.aliases.includes(commandName);
-  const command = client.categories
-    .find((cat) => cat.commands.find(filter))
-    ?.commands.find(filter);
+  const command = client.utils.findCommand(client, commandName);
   if (!command) return;
   if (command.ownerOnly && !client.config.owners.includes(authorID))
     return message.channel.stopTyping();
@@ -60,7 +57,7 @@ module.exports = async (client, message) => {
     });
   } else if (args && command.args && args.length < command.args.required?.length) {
     const embed = new Embed()
-      .setDescription(`\`\`\`${command.args.message}\`\`\` \n`)
+      .setDescription(`\`\`\`${command.args.required[args.length].message}\`\`\` \n`)
       .setColor("e84d3f");
     return message.reply({
       embeds: [embed],

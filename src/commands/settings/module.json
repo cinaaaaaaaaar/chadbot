@@ -1,0 +1,6 @@
+{
+  "name": "settings",
+  "description": "Configure the bot to your needs.",
+  "aliases": ["config", "configuration"],
+  "hide": false
+}

@@ -47,7 +47,8 @@ class Database extends EventEmitter {
     const Schema = this.schemas[schema];
     if (!this.cache[schema].get(id)) await this.saveToCacheOrCreate(schema, id);
     await Schema.findOneAndUpdate({ _id: id }, { _id: id, [key]: value }, { upsert: true });
-    return this.cache[schema].get(id).set(key, value);
+    this.cache[schema].get(id).set(key, value);
+    return this.cache[schema].get(id).get(key);
   }
   /**
    *
@@ -77,7 +78,7 @@ class Database extends EventEmitter {
     if (!current) return;
     if ((typeof current === "array") | (current.isMongooseArray == false))
       throw new TypeError(`Expected array but got ${typeof current}`);
-    current.remove(value);
+    current = current.remove(value);
     return await this.set(schema, id, key, uniq(current));
   }
   async saveToCacheOrCreate(schema, id) {

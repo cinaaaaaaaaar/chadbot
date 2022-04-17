@@ -1,6 +1,6 @@
 {
-  "name": "Hidden",
-  "aliases": "owner",
+  "name": "hidden",
+  "aliases": ["owner"],
   "description": "Commands that only owners can use",
   "hide": true
 }
