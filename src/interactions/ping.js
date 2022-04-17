@@ -1,7 +1,7 @@
 const Client = require("../structures/Client");
-const { Command } = require("../..");
+const { SlashCommand } = require("../..");
 const { CommandInteraction } = require("discord.js");
-class PingCommand extends Command {
+class PingCommand extends SlashCommand {
   constructor() {
     super({
       name: "ping",

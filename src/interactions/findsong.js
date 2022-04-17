@@ -1,13 +1,12 @@
 const Client = require("../structures/Client");
-const { Command, NLEmbed } = require("..");
+const { SlashCommand, Embed } = require("..");
 const { CommandInteraction } = require("discord.js");
 const { get } = require("node-superfetch");
-class FindsongCommand extends Command {
+class FindsongCommand extends SlashCommand {
   constructor() {
     super({
       name: "find_song",
-      description:
-        "Damn that song's fire! I wonder what is the name of the song.",
+      description: "Damn that song's fire! I wonder what is the name of the song.",
       options: [
         {
           name: "url",
@@ -31,15 +30,13 @@ class FindsongCommand extends Command {
     // else if (!options[0]) {
     //   return interaction.error("Please enter a video or audio file/URL");
     // } else url = options[1];
-    if (!url.isURL() && !url.includes(".mp3") && !url.includes(".mp4"))
-      return interaction.error(
-        "Wrong file type, please provide a mp3 or mp4 file."
-      );
+    if (!url.isURL() || (!url.includes(".mp3") && !url.includes(".mp4")))
+      return interaction.error("Wrong file type, please provide a mp3 or mp4 file.");
     const auddURL = `https://api.audd.io/?api_token=${process.env.AUDD_TOKEN}&url=${url}`;
     const res = await get(auddURL);
     if (!res.body.result || res.body.status !== "success")
       return interaction.error("Unknown song.");
-    const embed = new NLEmbed()
+    const embed = new Embed()
       .setTitle(res.body.result.title)
       .setDescription(`by ${res.body.result.artist}`)
       .addField("Album", res.body.result.album, true)

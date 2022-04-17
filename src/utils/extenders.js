@@ -1,5 +1,23 @@
 const letters = require("../../assets/json/flipped");
-const { CommandInteraction } = require("discord.js");
+const {
+  CommandInteraction,
+  Message,
+  MessageMentions: { USERS_PATTERN, ROLES_PATTERN, CHANNELS_PATTERN },
+} = require("discord.js");
+const Client = require("../structures/Client");
+
+Message.prototype.error = async function (error) {
+  const content = {
+    embeds: [
+      {
+        title: "Wrong Usage",
+        description: "```" + error + "```",
+        color: "e84d3f",
+      },
+    ],
+  };
+  return this.reply(content);
+};
 
 CommandInteraction.prototype.error = async function (error) {
   const content = {
@@ -29,6 +47,16 @@ String.prototype.toNumber = function () {
   number = parseInt(number.replace("m", "000000"));
   return number;
 };
+
+String.prototype.clean = function () {
+  this.replace(/`/g, "`" + String.fromCharCode(8203));
+  this.replace(/@/g, "@" + String.fromCharCode(8203));
+  return this.toString();
+};
+/**
+ *
+ * @param {Client} client
+ */
 
 String.prototype.shuffle = function () {
   let splitted = this.split(""),
@@ -92,12 +120,25 @@ String.prototype.isImageURL = function () {
   return regex.test(this);
 };
 
-Object.filter = function (obj, callback) {
-  return Object.fromEntries(Object.entries(obj).filter(callback));
+String.prototype.isMention = function () {
+  const regex = /<@!?(\d{17,19})>/;
+  return regex.test(this);
 };
 
 String.prototype.isAscii = function () {
   return /^[\x00-\x7F]*$/.test(this);
 };
+
+Object.filter = function (obj, callback) {
+  return Object.fromEntries(Object.entries(obj).filter(callback));
+};
+
+function match(string, regex) {
+  const matched = [];
+  for (let i = 0; i < string.match(regex)?.length; i++) {
+    matched.push(regex.exec(string.match(regex)[i])[1]);
+  }
+  return matched ? matched : null;
+}
 
 module.exports = [String, Object, CommandInteraction, Array, Number];

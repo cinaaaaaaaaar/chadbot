@@ -1,7 +1,7 @@
-const Client = require("../../structures/Client");
-const { Command } = require("../..");
+const Client = require("../structures/Client");
+const { SlashCommand } = require("..");
 const { CommandInteraction } = require("discord.js");
-class ChatbotChannelCommand extends Command {
+class ChatbotChannelCommand extends SlashCommand {
   constructor() {
     super({
       name: "set_chatbot",
@@ -11,14 +11,13 @@ class ChatbotChannelCommand extends Command {
         {
           name: "channel",
           description: "The channel that the bot will listen for messages",
-          type: "CHANNEL",
+          type: 7,
           required: true,
-          channel_types: "GUILD_TEXT",
         },
         {
           name: "status",
           description: "Choose whether you enable or disable the feature",
-          type: "BOOLEAN",
+          type: 5,
           required: true,
         },
       ],

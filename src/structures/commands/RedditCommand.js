@@ -1,15 +1,19 @@
 const Client = require("../Client");
-const { Command, NLEmbed } = require("../..");
+const { Command, SlashCommand, Embed } = require("../..");
 const { CommandInteraction } = require("discord.js");
 const { get } = require("node-superfetch");
 
-class RedditCommand extends Command {
+class RedditCommand extends Command {}
+
+class RedditSlashCommand extends SlashCommand {
   constructor({
     name = "",
     description = "",
     options = [],
     defaultPermission = true,
     guild = null,
+    nsfw = false,
+    permissions = [],
     subreddits = [],
     postHint,
     embedTitle = "",
@@ -22,6 +26,8 @@ class RedditCommand extends Command {
       options,
       defaultPermission,
       guild,
+      nsfw,
+      permissions,
     });
     this.params = {
       subreddits,
@@ -29,15 +35,16 @@ class RedditCommand extends Command {
       embedTitle,
       addSubredditFooter,
       addUpvotesFooter,
+      nsfw,
+      permissions,
     };
   }
   /**
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
    */
-  async run(client, interaction, options) {
+  async run(client, interaction) {
     const subreddit =
       this.params.subreddits[
         client.utils.randomNumber(0, this.params.subreddits.length - 1)
@@ -47,7 +54,7 @@ class RedditCommand extends Command {
       this.params.postHint,
       true
     );
-    const embed = new NLEmbed()
+    const embed = new Embed()
       .setTitle(this.params.embedTitle ? this.params.embedTitle : post.title)
       .setURL(`https://reddit.com${post.permalink}`)
       .setTimestamp();
@@ -73,4 +80,7 @@ class RedditCommand extends Command {
   }
 }
 
-module.exports = RedditCommand;
+module.exports = {
+  RedditCommand,
+  RedditSlashCommand,
+};

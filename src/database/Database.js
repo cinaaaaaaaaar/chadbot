@@ -24,26 +24,71 @@ class Database extends EventEmitter {
       guilds: require("./models/GuildSchema"),
     };
   }
-  get(schema, id, key) {
-    return this.cache[schema].get(id)?.get(key);
+  /**
+   *
+   * @param {string} schema
+   * @param {string} id
+   * @param {string} key
+   * @returns Collection
+   */
+  async get(schema, id, key) {
+    const data = this.cache[schema].get(id) || (await this.saveToCacheOrCreate(schema, id));
+    return data.get(key);
   }
-  set(schema, id, key, value) {
-    this.emit("update", schema, id, key, value);
-    return this.cache[schema].set(id, new Collection().set(key, value));
+  /**
+   *
+   * @param {string} schema
+   * @param {string} id
+   * @param {string} key
+   * @param {any} value
+   * @returns Collection
+   */
+  async set(schema, id, key, value) {
+    const Schema = this.schemas[schema];
+    if (!this.cache[schema].get(id)) await this.saveToCacheOrCreate(schema, id);
+    await Schema.findOneAndUpdate({ _id: id }, { _id: id, [key]: value }, { upsert: true });
+    return this.cache[schema].get(id).set(key, value);
   }
-  push(schema, id, key, value) {
-    const current = this.get(schema, id, key) ? this.get(schema, id, key) : [];
+  /**
+   *
+   * @param {string} schema
+   * @param {string} id
+   * @param {string} key
+   * @param {any} value
+   * @returns Collection
+   */
+  async push(schema, id, key, value) {
+    const current = await this.get(schema, id, key);
     if ((typeof current === "array") | (current.isMongooseArray == false))
       throw new TypeError(`Expected array but got ${typeof current}`);
     current.push(value);
-    return this.set(schema, id, key, uniq(current));
+    return await this.set(schema, id, key, uniq(current));
   }
-  remove(schema, id, key, value) {
-    let current = this.get(schema, id, key) ? this.get(schema, id, key) : [];
+  /**
+   *
+   * @param {string} schema
+   * @param {string} id
+   * @param {string} key
+   * @param {any} value
+   * @returns Collection
+   */
+  async remove(schema, id, key, value) {
+    let current = await this.get(schema, id, key);
+    if (!current) return;
     if ((typeof current === "array") | (current.isMongooseArray == false))
       throw new TypeError(`Expected array but got ${typeof current}`);
-    current = current.remove(value);
-    return this.set(schema, id, key, uniq(current));
+    current.remove(value);
+    return await this.set(schema, id, key, uniq(current));
+  }
+  async saveToCacheOrCreate(schema, id) {
+    const Schema = this.schemas[schema];
+    const existingData = await Schema.findById(id);
+    let data = this.cache[schema].get(id);
+    if (!existingData) {
+      data = await Schema.create({ _id: id });
+      data = this.cache.save(schema, id, data);
+    } else if (!data) data = this.cache.save(schema, id, existingData);
+    return data;
   }
 }
 

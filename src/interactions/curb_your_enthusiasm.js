@@ -1,38 +1,24 @@
-const Client = require("../../structures/Client");
-const { Command } = require("../..");
+const Client = require("../structures/Client");
+const { SlashCommand } = require("..");
 const { CommandInteraction, MessageAttachment } = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
 
-class CurbYourEnthusiasmCommand extends Command {
+class CurbYourEnthusiasmCommand extends SlashCommand {
   constructor() {
     super({
       name: "curb_your_enthusiasm",
-      description:
-        "Adds the curb your enthusiasm ending to the end of the given image/video",
+      description: "Adds the curb your enthusiasm ending to the end of the given image/video",
       options: [
-        {
-          name: "user",
-          description: "The user you want to use their avatar as input",
-          type: "USER",
-          required: false,
-        },
         {
           name: "url",
           description: "The URL to the asset you want to input",
-          type: "STRING",
-          required: false,
+          type: 3,
+          required: true,
         },
         {
-          name: "server_avatar",
-          description: "If you want to input the avatar of the current server",
-          type: "BOOLEAN",
-          required: false,
-        },
-        {
-          name: "asset_duration",
-          description:
-            "The duration in seconds you want the uploaded asset to be displayed.",
-          type: "INTEGER",
+          name: "second",
+          description: "The second you want to start the outro.",
+          type: 4,
           required: false,
         },
       ],
@@ -47,29 +33,24 @@ class CurbYourEnthusiasmCommand extends Command {
   async run(client, interaction, options) {
     const videoAsset = client.assets.json.urls.video.curb_your_enthusiasm;
     const audioAsset = client.assets.json.urls.audio.curb_your_enthusiasm;
-    const url = client.utils.getImage(interaction, options);
+    const url = options[0];
     const fileType = url.split(/[#?]/)[0].split(".").pop().trim();
     const supportedFormats = {
       image: ["jpg", "jpeg", "png", "bmp"],
       video: ["mp4", "mov"],
     };
-    if (
-      !supportedFormats.image.concat(supportedFormats.video).includes(fileType)
-    )
+    if (!supportedFormats.image.concat(supportedFormats.video).includes(fileType))
       return interaction.error("Unsupported file format");
     const type = supportedFormats.image.includes(fileType)
       ? "image"
       : supportedFormats.video.includes(fileType)
       ? "video"
       : "audio";
-    let length;
-    if (options.find((x) => typeof x === "number"))
-      length = options.find((x) => typeof x === "number");
-    else if (type === "video") length = await getLength(url);
-    else length = 5;
+    let length = options[1];
+    if (!length) length = await getLength(url);
 
-    if (type === "video" && length > (await getLength(url)))
-      return interaction.error("Duration is longer than source asset");
+    if (length > (await getLength(url)))
+      return interaction.error("Duration is longer than given video");
 
     const data = {
       output: {

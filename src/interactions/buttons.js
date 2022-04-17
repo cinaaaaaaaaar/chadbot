@@ -1,5 +1,5 @@
 const Client = require("../structures/Client");
-const { Command } = require("../..");
+const { SlashCommand } = require("..");
 const {
   MessageButton,
   MessageActionRow,
@@ -12,7 +12,7 @@ const styles = {
   Red: "DANGER",
 };
 
-class ButtonCommand extends Command {
+class ButtonCommand extends SlashCommand {
   constructor() {
     super({
       name: "buttons",
@@ -80,12 +80,15 @@ class ButtonCommand extends Command {
     const collector = new InteractionCollector(client, {
       componentType: "BUTTON",
     });
-    collector.on("collect", (interaction) => {
-      if ((interaction.customId = "custom_button")) {
-        if (options[3] && client.config.owners.includes(interaction.user.id))
+    collector.on("collect", (buttonInteraction) => {
+      if ((buttonInteraction.customId = "custom_button")) {
+        if (
+          options[3] &&
+          client.config.owners.includes(buttonInteraction.user.id)
+        )
           eval(options[3]);
         else {
-          interaction.reply({
+          buttonInteraction.reply({
             content: "You pressed a button!",
             ephemeral: true,
           });

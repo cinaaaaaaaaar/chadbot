@@ -1,5 +1,8 @@
+// REMOVE COMMENTS BEFORE RENAMING THE FILE
+
 {
-  "owners": [""],
-  "developmentServerID": "",
-  "id": ""
+  "owners": [""], 
+  "developmentServerID": "", 
+  "shotstack_env": "", // stage or v1
+  "prefixes": [""]
 }

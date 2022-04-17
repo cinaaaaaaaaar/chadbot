@@ -1,7 +1,7 @@
 const Client = require("../structures/Client");
-const { Command } = require("..");
+const { SlashCommand } = require("..");
 const { CommandInteraction, MessageCollector } = require("discord.js");
-class FasttypeCommand extends Command {
+class FasttypeCommand extends SlashCommand {
   constructor() {
     super({
       name: "fast_type",

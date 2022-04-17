@@ -1,4 +1,7 @@
 const { Client, Collection } = require("discord.js");
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { REST } = require("@discordjs/rest");
+const { Routes } = require("discord-api-types/v9");
 const Database = require("../database/Database");
 const Generator = require("./Generator");
 const { readdirSync } = require("fs");
@@ -7,6 +10,7 @@ class BaseClient extends Client {
   constructor(options) {
     super(options);
     this.commands = new Collection();
+    this.categories = new Collection();
     this.config = require("../../config.json");
     this.package = require("../../package.json");
     this.database = new Database(process.env.MONGO_URI);
@@ -16,82 +20,64 @@ class BaseClient extends Client {
     this.init(options.token);
   }
   async init(token) {
-    await this.login(token);
+    this.loadCommands();
     this.loadUtils();
     this.loadAssets();
-    this.loadCommands();
     this.loadEvents();
+    await this.login(token);
+    this.loadApplicationCommands();
   }
   loadCommands() {
-    const { SlashCommandBuilder } = require("@discordjs/builders");
-    const items = readdirSync("./src/commands");
-    items
-      .filter((x) => x.endsWith(".js"))
-      .forEach((commandFile) => {
-        const Command = require(`../commands/${commandFile}`);
+    const categories = readdirSync("./src/commands");
+    let commandCount = 0;
+    categories.forEach(async (category) => {
+      const module = require(`../commands/${category}/module.json`);
+      this.categories.set(module.name, {
+        module,
+        commands: new Collection(),
+      });
+      const files = await readdirSync(`./src/commands/${category}`).filter((x) =>
+        x.endsWith(".js")
+      );
+      files.forEach((file) => {
+        const Command = require(`../commands/${category}/${file}`);
         const command = new Command();
-        this.commands.set(command.data.name, command);
+        this.categories.get(module.name).commands.set(command.name, command);
+        commandCount++;
       });
-    items
-      .filter((x) => !x.endsWith(".js"))
-      .forEach((folder) => {
-        const folderProps = require(`../commands/${folder}/module.json`);
-        const subCommands = readdirSync(`./src/commands/${folder}`);
-        const command = new SlashCommandBuilder()
-          .setName(folderProps.name)
-          .setDescription(folderProps.description);
-        subCommands
-          .filter((x) => x.endsWith(".js"))
-          .forEach((subcommandFile, index) => {
-            const SubCommand = require(`../commands/${folder}/${subcommandFile}`);
-            const subcommand = new SubCommand();
-
-            command.addSubcommand((command) =>
-              command
-                .setName(subcommand.data.name)
-                .setDescription(subcommand.data.description)
-            );
-            subcommand.data.options.forEach((option) => {
-              if (option.choices)
-                command.options
-                  .find((x) => x.name == subcommand.data.name)
-                  [`add${option.type.upperFirstChar()}Option`](
-                    (commandOption) =>
-                      commandOption
-                        .setName(option.name)
-                        .setDescription(option.description)
-                        .setRequired(option.required)
-                        .setChoices(option.choices)
-                  );
-              else
-                command.options
-                  .find((x) => x.name == subcommand.data.name)
-                  [`add${option.type.upperFirstChar()}Option`](
-                    (commandOption) =>
-                      commandOption
-                        .setName(option.name)
-                        .setDescription(option.description)
-                        .setRequired(option.required)
-                  );
-            });
-            const data = command.toJSON();
-            const commandObject = { data };
-            if (index == subCommands.length - 2)
-              data.options.forEach((option) => {
-                const SubCommand = require(`../commands/${data.name}/${option.name}`);
-                const subcommand = new SubCommand();
-                option.run = subcommand.run;
-                option.params = subcommand.params;
-              });
-            this.commands.set(folder, commandObject);
-          });
-      });
-    const existingCommands = this.application.commands.cache;
-    this.commands.forEach((command) => {
-      if (!existingCommands.find((x) => (x.data.name = command.data.name)))
-        this.application.commands.create(command.data);
     });
-    console.log(`Loaded ${this.commands.size} commands.`);
+    console.log(`Loaded ${this.categories.size} categories.`);
+  }
+  async loadApplicationCommands() {
+    const rest = new REST({ version: "9" }).setToken(this.token);
+    const files = readdirSync("./src/interactions").filter((x) => x.endsWith(".js"));
+
+    files.forEach((file) => {
+      const Command = require(`../interactions/${file}`);
+      const command = new Command();
+      this.commands.set(command.name, command);
+    });
+
+    const commands = await rest.get(Routes.applicationCommands(this.user.id));
+    await commands.forEach(async (command) => {
+      await rest.delete(Routes.applicationCommand(this.user.id, command.id));
+    });
+    const route =
+      process.env.ENVIRONMENT === "prod" || process.env.ENVIRONMENT === "production"
+        ? Routes.applicationCommands(this.user.id)
+        : Routes.applicationGuildCommands(this.user.id, this.config.developmentServerID);
+
+    await rest.put(route, {
+      body: this.commands.map((data) => {
+        return {
+          name: data.name,
+          description: data.description,
+          options: data.options,
+          defaultPermission: false,
+        };
+      }),
+    });
+    console.log(`Loaded ${this.commands.size} application commands.`);
   }
   loadEvents() {
     const files = readdirSync("./src/events/");
@@ -105,9 +91,7 @@ class BaseClient extends Client {
         });
       }
 
-      this.on(file.split(".")[0], (...args) =>
-        require(`../events/${file}`)(this, ...args)
-      );
+      this.on(file.split(".")[0], (...args) => require(`../events/${file}`)(this, ...args));
     });
   }
   loadUtils() {
@@ -122,9 +106,7 @@ class BaseClient extends Client {
       const assets = readdirSync(`./assets/${folder}`);
       assets.forEach((asset) => {
         this.assets[folder] = new Object();
-        this.assets[folder][
-          asset.split(".")[0]
-        ] = require(`../../assets/${folder}/${asset}`);
+        this.assets[folder][asset.split(".")[0]] = require(`../../assets/${folder}/${asset}`);
       });
     });
   }

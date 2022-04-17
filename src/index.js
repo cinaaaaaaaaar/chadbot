@@ -16,6 +16,7 @@ const client = new Client({
 
 module.exports = {
   Command: require("./structures/commands/Command"),
-  NLEmbed: require("./structures/NLEmbed"),
+  SlashCommand: require("./structures/commands/SlashCommand"),
+  Embed: require("./structures/Embed"),
   Client,
 };

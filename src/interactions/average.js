@@ -1,8 +1,8 @@
-const Client = require("../../structures/Client");
-const { Command } = require("../..");
+const Client = require("../structures/Client");
+const { SlashCommand } = require("..");
 const { CommandInteraction, MessageAttachment } = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
-class AverageCommand extends Command {
+class AverageCommand extends SlashCommand {
   constructor() {
     super({
       name: "average",
@@ -11,13 +11,13 @@ class AverageCommand extends Command {
         {
           name: "text-1",
           description: "The text on the left (bozo fan)",
-          type: "STRING",
+          type: 3,
           required: true,
         },
         {
           name: "text-2",
           description: "The text on the left (chad enjoyer)",
-          type: "STRING",
+          type: 3,
           required: true,
         },
       ],

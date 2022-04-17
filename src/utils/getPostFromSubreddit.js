@@ -6,7 +6,7 @@ module.exports = async (subreddit = "", post_hint = "", nsfw = false) => {
   const filtered = nsfw
     ? body.data.children.filter((x) => x.data.post_hint === post_hint)
     : body.data.children.filter(
-        (x) => x.data.post_hint === "image" && !x.data.over_18
+        (x) => x.data.post_hint === post_hint && !x.data.over_18
       );
   return filtered[randomNumber(0, filtered.length - 1)].data;
 };
