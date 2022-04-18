@@ -63,7 +63,7 @@ class BaseClient extends Client {
       await rest.delete(Routes.applicationCommand(this.user.id, command.id));
     });
     const route =
-      process.env.ENVIRONMENT === "prod" || process.env.ENVIRONMENT === "production"
+      process.env.ENVIRONMENT === "PROD"
         ? Routes.applicationCommands(this.user.id)
         : Routes.applicationGuildCommands(this.user.id, this.config.developmentServerID);
 
