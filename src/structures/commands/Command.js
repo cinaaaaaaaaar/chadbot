@@ -2,7 +2,7 @@ const { PermissionResolvable } = require("discord.js");
 class Command {
   /**
    *
-   * @typedef {Object} Required
+   * @typedef {Object[]} Required
    * @property {string} name
    * @property {string} message
    */

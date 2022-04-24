@@ -1,7 +1,6 @@
 const { Collection } = require("discord.js");
-const Database = require("./Database");
 class Cache {
-  constructor(database) {
+  constructor() {
     this.users = new Collection();
     this.guilds = new Collection();
   }

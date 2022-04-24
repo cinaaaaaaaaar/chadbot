@@ -7,8 +7,12 @@ class EvalCommand extends Command {
       description: "Evaluate some code",
       aliases: ["eval"],
       args: {
-        required: ["code"],
-        message: "Please write the code.",
+        required: [
+          {
+            name: "code",
+            message: "Please write the code.",
+          },
+        ],
       },
       ownerOnly: true,
     });

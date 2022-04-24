@@ -1,11 +1,8 @@
 const mongoose = require("mongoose");
 const Cache = require("./Cache");
-const { Collection } = require("discord.js");
 const { uniq } = require("lodash");
-const { EventEmitter } = require("events");
-class Database extends EventEmitter {
+class Database {
   constructor(uri) {
-    super();
     mongoose
       .connect(uri, {
         useUnifiedTopology: true,
@@ -17,7 +14,7 @@ class Database extends EventEmitter {
         this.connectedAt = new Date().getTime();
         this.connection = data.connection;
         this.models = data.models;
-        this.cache = new Cache(this);
+        this.cache = new Cache();
       });
     this.schemas = {
       users: require("./models/UserSchema"),
