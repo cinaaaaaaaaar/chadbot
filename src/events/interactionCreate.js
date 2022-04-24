@@ -1,23 +1,22 @@
-const { Permissions } = require("discord.js");
+const { CommandInteraction } = require("discord.js");
+const Client = require("../structures/Client");
+
+/**
+ *
+ * @param {Client} client
+ * @param {CommandInteraction} interaction
+ * @returns
+ */
 module.exports = async (client, interaction) => {
   if (interaction.isCommand()) {
     await interaction.deferReply();
     const subcommand = interaction.options._subcommand;
     const command = subcommand
-      ? client.commands
-          .get(interaction.commandName)
-          .options.find((x) => x.name == subcommand)
+      ? client.commands.get(interaction.commandName).options.find((x) => x.name == subcommand)
       : client.commands.get(interaction.commandName);
-    const options = interaction.options._hoistedOptions.map(
-      (data) => data.value
-    );
+    const options = interaction.options._hoistedOptions.map((data) => data.value);
 
-    if (
-      command.permissions.length > 0 &&
-      !interaction.member.permissions.has(
-        Permissions.FLAGS[command.permissions]
-      )
-    )
+    if (!command.permissions.every((v) => message.member.permissions.toArray().includes(v)))
       return interaction.editReply({
         embed: {
           title: "Missing Permissions",
@@ -28,11 +27,7 @@ module.exports = async (client, interaction) => {
         },
       });
 
-    if (
-      !interaction.channel.nsfw &&
-      !interaction.channel.name.includes("nsfw") &&
-      command.nsfw
-    )
+    if (!interaction.channel.nsfw && command.nsfw)
       return interaction.editReply({
         embeds: [
           {

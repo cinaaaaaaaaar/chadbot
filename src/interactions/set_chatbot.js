@@ -5,19 +5,19 @@ class ChatbotChannelCommand extends SlashCommand {
   constructor() {
     super({
       name: "set_chatbot",
-      description:
-        "Set the channel that the bot will listen for messages and reply",
+      description: "Set the channel that the bot will listen for messages and reply",
+      permissions: ["MANAGE_GUILD"],
       options: [
         {
           name: "channel",
           description: "The channel that the bot will listen for messages",
-          type: 7,
+          type: "CHANNEL",
           required: true,
         },
         {
           name: "status",
           description: "Choose whether you enable or disable the feature",
-          type: 5,
+          type: "BOOLEAN",
           required: true,
         },
       ],
@@ -34,20 +34,10 @@ class ChatbotChannelCommand extends SlashCommand {
     if (channel.type !== "GUILD_TEXT")
       return interaction.editReply(`Please input a text channel`);
     if (options[1]) {
-      client.database.push(
-        "guilds",
-        interaction.guild.id,
-        "aiChannels",
-        channel.id
-      );
+      client.database.push("guilds", interaction.guild.id, "aiChannels", channel.id);
       interaction.editReply(`I've added ${channel} to the chatbot list.`);
     } else {
-      client.database.remove(
-        "guilds",
-        interaction.guild.id,
-        "aiChannels",
-        channel.id
-      );
+      client.database.remove("guilds", interaction.guild.id, "aiChannels", channel.id);
       interaction.editReply(`I've removed ${channel} from the chatbot list.`);
     }
   }

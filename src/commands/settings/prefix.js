@@ -6,6 +6,7 @@ class PrefixCommand extends Command {
     super({
       name: "prefix",
       description: "Add a prefix",
+      permissions: ["MANAGE_GUILD"],
       args: {
         required: [
           {

@@ -11,7 +11,7 @@ class QuoteCommand extends SlashCommand {
         {
           name: "audio",
           description: "Sends the quote as TTS and some background music",
-          type: 5,
+          type: "BOOLEAN",
         },
       ],
     });

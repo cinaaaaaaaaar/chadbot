@@ -11,7 +11,7 @@ class FindsongCommand extends SlashCommand {
         {
           name: "url",
           description: "The URL of the song you are looking for",
-          type: 3,
+          type: "STRING",
           required: true,
         },
       ],

@@ -11,13 +11,13 @@ class AverageCommand extends SlashCommand {
         {
           name: "text-1",
           description: "The text on the left (bozo fan)",
-          type: 3,
+          type: "STRING",
           required: true,
         },
         {
           name: "text-2",
           description: "The text on the left (chad enjoyer)",
-          type: 3,
+          type: "STRING",
           required: true,
         },
       ],

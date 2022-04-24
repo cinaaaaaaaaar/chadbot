@@ -14,7 +14,7 @@ class FasttypeCommand extends SlashCommand {
    * @param {CommandInteraction} interaction
    * @param {Array} options
    */
-  async run(client, interaction, options) {
+  async run(client, interaction) {
     const words = [];
     for (let i = 0; i < 6; i++) {
       words.push(await client.utils.randomWord());

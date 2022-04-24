@@ -17,19 +17,19 @@ class ButtonCommand extends SlashCommand {
         {
           name: "content",
           description: "The content of the message",
-          type: 3,
+          type: "STRING",
           required: true,
         },
         {
           name: "label",
           description: "The name of the button",
-          type: 3,
+          type: "STRING",
           required: true,
         },
         {
           name: "color",
           description: "The color of the button",
-          type: 3,
+          type: "STRING",
           choices: [
             { name: "Blurple", value: "Blurple" },
             { name: "Gray", value: "Gray" },
@@ -41,7 +41,7 @@ class ButtonCommand extends SlashCommand {
         {
           name: "code",
           description: "The code to run when the button is clicked (owner only)",
-          type: 3,
+          type: "STRING",
           required: false,
         },
       ],

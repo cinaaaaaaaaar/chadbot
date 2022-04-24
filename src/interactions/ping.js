@@ -14,7 +14,7 @@ class PingCommand extends SlashCommand {
    * @param {CommandInteraction} interaction
    * @param {Array} options
    */
-  async run(client, interaction, options) {
+  async run(client, interaction) {
     const sent = await interaction.editReply(":ping_pong: Pinging...");
     const ping = sent.createdTimestamp - interaction.createdTimestamp;
     await interaction.editReply(

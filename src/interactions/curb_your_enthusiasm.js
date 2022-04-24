@@ -8,18 +8,19 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
     super({
       name: "curb_your_enthusiasm",
       description: "Adds the curb your enthusiasm ending to the end of the given image/video",
+
       options: [
         {
           name: "url",
           description: "The URL to the asset you want to input",
-          type: 3,
+          type: "STRING",
           required: true,
         },
         {
           name: "second",
           description: "The second you want to start the outro.",
-          type: 4,
-          required: false,
+          type: "NUMBER",
+          required: true,
         },
       ],
     });

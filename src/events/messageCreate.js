@@ -44,7 +44,6 @@ module.exports = async (client, message) => {
       embeds: [embed],
     });
   } else if (
-    command.permissions.length > 0 &&
     !command.permissions.every((v) => message.member.permissions.toArray().includes(v))
   ) {
     const formattedPermissions = command.permissions.map((x) => `\`${x}\``).join(", ");
@@ -55,7 +54,7 @@ module.exports = async (client, message) => {
     return message.reply({
       embeds: [embed],
     });
-  } else if (args && command.args && args.length < command.args.required?.length) {
+  } else if (args.length < command.args.required?.length) {
     const embed = new Embed()
       .setDescription(`\`\`\`${command.args.required[args.length].message}\`\`\` \n`)
       .setColor("e84d3f");

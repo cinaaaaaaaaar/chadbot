@@ -1,10 +1,22 @@
 const { Client, Collection } = require("discord.js");
-const { SlashCommandBuilder } = require("@discordjs/builders");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const Database = require("../database/Database");
 const Generator = require("./Generator");
 const { readdirSync } = require("fs");
+const types = {
+  SUB_COMMAND: 1,
+  SUB_COMMAND_GROUP: 2,
+  STRING: 3,
+  INTEGER: 4,
+  BOOLEAN: 5,
+  USER: 6,
+  CHANNEL: 7,
+  ROLE: 8,
+  MENTIONABLE: 9,
+  NUMBER: 10,
+  ATTACHMENT: 11,
+};
 
 class BaseClient extends Client {
   constructor(options) {
@@ -58,25 +70,23 @@ class BaseClient extends Client {
       this.commands.set(command.name, command);
     });
 
-    const commands = await rest.get(Routes.applicationCommands(this.user.id));
-    await commands.forEach(async (command) => {
-      await rest.delete(Routes.applicationCommand(this.user.id, command.id));
+    const commandData = this.commands.map(({ name, description, options }) => {
+      return {
+        name,
+        description,
+        options: options?.map((option) => {
+          const type = types[option.type];
+          delete option.type;
+          return { type, ...option };
+        }),
+        defaultPermission: false,
+      };
     });
     const route =
-      process.env.ENVIRONMENT === "PROD"
-        ? Routes.applicationCommands(this.user.id)
-        : Routes.applicationGuildCommands(this.user.id, this.config.developmentServerID);
-
-    await rest.put(route, {
-      body: this.commands.map((data) => {
-        return {
-          name: data.name,
-          description: data.description,
-          options: data.options,
-          defaultPermission: false,
-        };
-      }),
-    });
+      process.env.ENVIRONMENT === "DEV"
+        ? Routes.applicationGuildCommands(this.user.id, this.config.developmentServerID)
+        : Routes.applicationCommands(this.user.id);
+    await rest.put(route, { body: commandData });
     console.log(`Loaded ${this.commands.size} application commands.`);
   }
   loadEvents() {
