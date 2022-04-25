@@ -1,6 +1,7 @@
 const Client = require("../structures/Client");
 const { SlashCommand } = require("../..");
 const { CommandInteraction } = require("discord.js");
+const μs = require("microseconds");
 class PingCommand extends SlashCommand {
   constructor() {
     super({
@@ -16,9 +17,19 @@ class PingCommand extends SlashCommand {
    */
   async run(client, interaction) {
     const sent = await interaction.editReply(":ping_pong: Pinging...");
-    const ping = sent.createdTimestamp - interaction.createdTimestamp;
-    await interaction.editReply(
-      `**Latency:** \`${ping}ms\` \n**Websocket Ping:** \`${client.ws.ping}ms\``
+    const interactionPing = sent.createdTimestamp - interaction.createdTimestamp;
+    const mongoStartTime = new Date().getTime();
+    await client.database.schemas.guilds.findById(interaction.guild.id);
+    const mongoServerPing = new Date().getTime() - mongoStartTime;
+    const databaseStartTime = μs.now();
+    await client.database.get("guilds", interaction.guild.id, "prefixes");
+    const databasePing = μs.now() - databaseStartTime;
+    await sent.edit(
+      `**Latency:** \`${interactionPing}ms\`\n**Websocket Ping:** \`${
+        client.ws.ping
+      }ms\`\n**Database Ping**: \`0.${Math.round(
+        databasePing
+      )}ms\`\n**MongoDB Ping:** \`${mongoServerPing}ms\``
     );
   }
 }

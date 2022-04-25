@@ -80,11 +80,11 @@ class Database {
   }
   async saveToCacheOrCreate(schema, id) {
     const Schema = this.schemas[schema];
-    const existingData = await Schema.findById(id);
+    const existingData = await Schema.findById(id).lean();
     let data = this.cache[schema].get(id);
     if (!existingData) {
-      data = await Schema.create({ _id: id });
-      data = this.cache.save(schema, id, data);
+      data = await Schema.create({ _id: id })
+      data = this.cache.save(schema, id, Object.filter(data._doc, x => !x[0].startsWith("_")));
     } else if (!data) data = this.cache.save(schema, id, existingData);
     return data;
   }

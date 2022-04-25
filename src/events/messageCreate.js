@@ -1,4 +1,4 @@
-const { Message, Permissions } = require("discord.js");
+const { Message } = require("discord.js");
 const { Embed } = require("..");
 const Client = require("../structures/Client");
 
@@ -33,8 +33,7 @@ module.exports = async (client, message) => {
   const commandName = args.shift().toLowerCase();
   const command = client.utils.findCommand(client, commandName);
   if (!command) return;
-  if (command.ownerOnly && !client.config.owners.includes(authorID))
-    return message.channel.stopTyping();
+  if (command.ownerOnly && !client.config.owners.includes(authorID)) return;
   else if (!message.channel.nsfw && command.nsfw) {
     const embed = new Embed()
       .setTitle("Inappropriate Channel")

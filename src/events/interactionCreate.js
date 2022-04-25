@@ -10,13 +10,13 @@ const Client = require("../structures/Client");
 module.exports = async (client, interaction) => {
   if (interaction.isCommand()) {
     await interaction.deferReply();
-    const subcommand = interaction.options._subcommand;
-    const command = subcommand
-      ? client.commands.get(interaction.commandName).options.find((x) => x.name == subcommand)
-      : client.commands.get(interaction.commandName);
-    const options = interaction.options._hoistedOptions.map((data) => data.value);
 
-    if (!command.permissions.every((v) => message.member.permissions.toArray().includes(v)))
+    const command = client.commands.get(interaction.commandName);
+    const options = interaction.options.data.map((data) => data.value);
+
+    if (
+      !command.permissions.every((v) => interaction.member.permissions.toArray().includes(v))
+    )
       return interaction.editReply({
         embed: {
           title: "Missing Permissions",
