@@ -57,7 +57,7 @@ class Database {
    */
   async push(schema, id, key, value) {
     const current = await this.get(schema, id, key);
-    if ((typeof current === "array") | (current.isMongooseArray == false))
+    if (typeof current === "array")
       throw new TypeError(`Expected array but got ${typeof current}`);
     current.push(value);
     return await this.set(schema, id, key, uniq(current));
@@ -72,8 +72,7 @@ class Database {
    */
   async remove(schema, id, key, value) {
     let current = await this.get(schema, id, key);
-    if (!current) return;
-    if (current.isMongooseArray === false)
+    if (typeof current === "array")
       throw new TypeError(`Expected array but got ${typeof current}`);
     current = current.remove(value);
     return await this.set(schema, id, key, uniq(current));
@@ -83,8 +82,12 @@ class Database {
     const existingData = await Schema.findById(id).lean();
     let data = this.cache[schema].get(id);
     if (!existingData) {
-      data = await Schema.create({ _id: id })
-      data = this.cache.save(schema, id, Object.filter(data._doc, x => !x[0].startsWith("_")));
+      data = await Schema.create({ _id: id });
+      data = this.cache.save(
+        schema,
+        id,
+        Object.filter(data._doc, (x) => !x[0].startsWith("_"))
+      );
     } else if (!data) data = this.cache.save(schema, id, existingData);
     return data;
   }

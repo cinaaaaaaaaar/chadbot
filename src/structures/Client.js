@@ -71,16 +71,18 @@ class BaseClient extends Client {
     });
 
     const commandData = this.commands.map(({ name, description, options }) => {
-      return {
+      const data = {
         name,
         description,
         options: options?.map((option) => {
           const type = types[option.type];
           delete option.type;
-          return { type, ...option };
+          option = { type, ...option };
+          return option;
         }),
         defaultPermission: false,
       };
+      return data;
     });
     const route =
       process.env.ENVIRONMENT === "DEV"

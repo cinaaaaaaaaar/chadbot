@@ -38,7 +38,7 @@ String.prototype.toNumber = function () {
   const regex = /[.,\s]/g;
   const result = this.replace(regex, "");
   let number = result.replace("k", "000").replace("m", "000000");
-  number = parseInt(number);
+  number = parseInt(number, 10);
   return number;
 };
 
