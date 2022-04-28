@@ -1,17 +1,22 @@
-const letters = require("../assets/json/flipped");
-const { CommandInteraction, Message } = require("discord.js");
+const letters = require("../../assets/json/flipped");
+const {
+  CommandInteraction,
+  Message,
+  MessageMentions: { USERS_PATTERN, ROLES_PATTERN, CHANNELS_PATTERN },
+} = require("discord.js");
+const Client = require("../structures/Client");
 
-Message.prototype.error = async function (error, title) {
+Message.prototype.error = async function (error) {
   const content = {
     embeds: [
       {
-        title: title || "Wrong Usage",
+        title: "Wrong Usage",
         description: "```" + error + "```",
         color: "e84d3f",
       },
     ],
   };
-  return await this.reply(content);
+  return this.reply(content);
 };
 
 CommandInteraction.prototype.error = async function (error) {
@@ -24,7 +29,8 @@ CommandInteraction.prototype.error = async function (error) {
       },
     ],
   };
-  return await this.reply(content);
+  if (this.deferred) return this.editReply(content);
+  else return this.reply(content);
 };
 
 String.prototype.wrap = function (width) {
@@ -47,6 +53,10 @@ String.prototype.clean = function () {
   this.replace(/@/g, "@" + String.fromCharCode(8203));
   return this.toString();
 };
+/**
+ *
+ * @param {Client} client
+ */
 
 String.prototype.shuffle = function () {
   let splitted = this.split(""),
@@ -122,3 +132,13 @@ String.prototype.isAscii = function () {
 Object.filter = function (obj, callback) {
   return Object.fromEntries(Object.entries(obj).filter(callback));
 };
+
+function match(string, regex) {
+  const matched = [];
+  for (let i = 0; i < string.match(regex)?.length; i++) {
+    matched.push(regex.exec(string.match(regex)[i])[1]);
+  }
+  return matched ? matched : null;
+}
+
+module.exports = [String, Object, CommandInteraction, Array, Number];

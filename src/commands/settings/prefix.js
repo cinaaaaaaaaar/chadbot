@@ -1,4 +1,5 @@
-const { Command, Embed, Client } = require("../..");
+const Client = require("../../structures/Client");
+const { Command, Embed } = require("../..");
 const { Message } = require("discord.js");
 class PrefixCommand extends Command {
   constructor() {

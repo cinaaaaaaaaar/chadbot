@@ -3,7 +3,6 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const Database = require("../database/Database");
 const Generator = require("./Generator");
-const Utils = require("./Utils");
 const { readdirSync } = require("fs");
 const types = {
   SUB_COMMAND: 1,
@@ -24,25 +23,25 @@ class BaseClient extends Client {
     super(options);
     this.commands = new Collection();
     this.categories = new Collection();
-    this.cooldowns = new Collection();
     this.config = require("../../config.json");
     this.package = require("../../package.json");
     this.database = new Database(process.env.MONGO_URI);
     this.generator = new Generator(this);
-    this.utils = new Utils(this);
+    this.utils = new Object();
     this.assets = new Object();
     this.init(options.token);
   }
   async init(token) {
     this.loadCommands();
+    this.loadUtils();
     this.loadAssets();
     this.loadEvents();
     await this.login(token);
-    await this.loadApplicationCommands();
-    this.loadedAt = new Date().getTime();
+    this.loadApplicationCommands();
   }
   loadCommands() {
     const categories = readdirSync("./src/commands");
+    let commandCount = 0;
     categories.forEach(async (category) => {
       const module = require(`../commands/${category}/module.json`);
       this.categories.set(module.name, {
@@ -56,6 +55,7 @@ class BaseClient extends Client {
         const Command = require(`../commands/${category}/${file}`);
         const command = new Command();
         this.categories.get(module.name).commands.set(command.name, command);
+        commandCount++;
       });
     });
     console.log(`Loaded ${this.categories.size} categories.`);
@@ -102,6 +102,12 @@ class BaseClient extends Client {
       }
 
       this.on(file.split(".")[0], (...args) => require(`../events/${file}`)(this, ...args));
+    });
+  }
+  loadUtils() {
+    const utils = readdirSync("./src/utils");
+    utils.forEach((util) => {
+      this.utils[util.split(".")[0]] = require(`../utils/${util}`);
     });
   }
   loadAssets() {

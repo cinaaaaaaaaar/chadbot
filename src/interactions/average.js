@@ -1,4 +1,5 @@
-const { SlashCommand, Client } = require("..");
+const Client = require("../structures/Client");
+const { SlashCommand } = require("..");
 const { CommandInteraction, MessageAttachment } = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
 class AverageCommand extends SlashCommand {

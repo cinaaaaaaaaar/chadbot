@@ -1,4 +1,5 @@
-const { SlashCommand, Client } = require("..");
+const Client = require("../structures/Client");
+const { SlashCommand } = require("..");
 const { CommandInteraction } = require("discord.js");
 class QuoteCommand extends SlashCommand {
   constructor() {
