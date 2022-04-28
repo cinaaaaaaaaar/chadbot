@@ -1,5 +1,4 @@
-const Client = require("../../structures/Client");
-const { Command, Embed } = require("../..");
+const { Command, Embed, Client } = require("../..");
 const { Message } = require("discord.js");
 class HelpCommand extends Command {
   constructor() {
@@ -25,7 +24,7 @@ class HelpCommand extends Command {
     const category = categories
       .filter((x) => !x.module.hide)
       .find((x) => x.module.name == args[0] || x.module.aliases.includes(args[0]));
-    const command = client.utils.findCommand(client, args[0], true);
+    const command = client.utils.findCommand(args[0], true);
     if (category?.module.nsfw && !message.channel.nsfw)
       return message.error("This category includes NSFW content.");
     if (command?.nsfw && !message.channel.nsfw)

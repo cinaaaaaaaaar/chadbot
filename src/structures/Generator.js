@@ -35,7 +35,7 @@ class Generator {
     message.channel.sendTyping();
     if (!message.content)
       return message.reply(
-        noContentMessages[this.client.utils.randomNumber(0, noContentMessages.length - 1)]
+        noContentMessages[this.client.utils.randomNumber(0, noContentMessages.length)]
       );
     const URL = `http://api.brainshop.ai/get?bid=155488&key=${process.env.BRAINSHOP_TOKEN}&uid=${message.author.id}&msg=${message.content}`;
     const { body } = await get(URL);

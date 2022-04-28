@@ -1,5 +1,4 @@
-const Client = require("../structures/Client");
-const { SlashCommand } = require("../..");
+const { SlashCommand, Client } = require("../..");
 const { CommandInteraction } = require("discord.js");
 const μs = require("microseconds");
 class PingCommand extends SlashCommand {

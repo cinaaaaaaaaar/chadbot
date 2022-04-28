@@ -1,6 +1,7 @@
 const { Intents } = require("discord.js");
 const Client = require("./structures/Client");
 require("dotenv-flow").config();
+require("./extenders");
 const client = new Client({
   token: process.env.DISCORD_TOKEN,
   intents: [
@@ -18,5 +19,5 @@ module.exports = {
   Command: require("./structures/commands/Command"),
   SlashCommand: require("./structures/commands/SlashCommand"),
   Embed: require("./structures/Embed"),
-  Client,
+  Client: client,
 };
