@@ -1,5 +1,4 @@
-const Client = require("../structures/Client");
-const { SlashCommand } = require("..");
+const { SlashCommand, Client } = require("..");
 const { CommandInteraction, MessageCollector } = require("discord.js");
 class FasttypeCommand extends SlashCommand {
   constructor() {
@@ -16,7 +15,7 @@ class FasttypeCommand extends SlashCommand {
    */
   async run(client, interaction) {
     const words = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i <= 5; i++) {
       words.push(await client.utils.randomWord());
     }
     const normal = words.join(" ");

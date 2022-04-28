@@ -1,5 +1,5 @@
 const { CommandInteraction } = require("discord.js");
-const Client = require("../structures/Client");
+const { Client } = require("..");
 
 /**
  *

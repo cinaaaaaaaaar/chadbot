@@ -1,5 +1,4 @@
-const Client = require("../structures/Client");
-const { SlashCommand } = require("..");
+const { SlashCommand, Client } = require("..");
 const { MessageButton, MessageActionRow, InteractionCollector } = require("discord.js");
 const styles = {
   Blurple: "PRIMARY",
@@ -55,7 +54,7 @@ class ButtonCommand extends SlashCommand {
    */
   async run(client, interaction, options) {
     if (options[0].length > 2000)
-      return interaction.reply({
+      return interaction.editReply({
         content: "Content can be maximum of 2,000 characters long.",
         ephemeral: true,
       });

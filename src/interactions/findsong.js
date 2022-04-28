@@ -1,5 +1,4 @@
-const Client = require("../structures/Client");
-const { SlashCommand, Embed } = require("..");
+const { SlashCommand, Embed, Client } = require("..");
 const { CommandInteraction } = require("discord.js");
 const { get } = require("node-superfetch");
 class FindsongCommand extends SlashCommand {
@@ -25,11 +24,6 @@ class FindsongCommand extends SlashCommand {
    */
   async run(client, interaction, options) {
     let url = options[0];
-    // let url;
-    // if (options[0]) url = options[0].url;
-    // else if (!options[0]) {
-    //   return interaction.error("Please enter a video or audio file/URL");
-    // } else url = options[1];
     if (!url.isURL() || (!url.includes(".mp3") && !url.includes(".mp4")))
       return interaction.error("Wrong file type, please provide a mp3 or mp4 file.");
     const auddURL = `https://api.audd.io/?api_token=${process.env.AUDD_TOKEN}&url=${url}`;

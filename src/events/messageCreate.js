@@ -1,4 +1,4 @@
-const { Message } = require("discord.js");
+const { Message, Collection } = require("discord.js");
 const { Embed } = require("..");
 const Client = require("../structures/Client");
 
@@ -31,8 +31,32 @@ module.exports = async (client, message) => {
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
   const commandName = args.shift().toLowerCase();
-  const command = client.utils.findCommand(client, commandName);
+  const command = client.utils.findCommand(commandName);
   if (!command) return;
+
+  const now = new Date().getTime();
+  if (!client.cooldowns.has(authorID)) client.cooldowns.set(authorID, new Collection());
+  const userCooldowns = client.cooldowns.get(authorID);
+  if (!userCooldowns.has(command.name))
+    userCooldowns.set(command.name, { timestamp: now, usedAmount: 1, sentAmount: 0 });
+  else {
+    const cooldown = userCooldowns.get(command.name);
+    const expiry = cooldown.timestamp + command.cooldown * 1000;
+    if (expiry > now && cooldown.usedAmount > 3) {
+      if (cooldown.sentAmount >= 3) return;
+      cooldown.sentAmount++;
+      const timeLeft = (expiry - now) / 1000;
+      const embed = new Embed()
+        .setTitle("Dude, chill!")
+        .setDescription(
+          `You are using this command too frequently!\nPlease wait **${timeLeft.toFixed(
+            1
+          )}** seconds.`
+        );
+      return message.reply({ embeds: [embed] });
+    }
+  }
+
   if (command.ownerOnly && !client.config.owners.includes(authorID)) return;
   else if (!message.channel.nsfw && command.nsfw) {
     const embed = new Embed()
@@ -62,8 +86,15 @@ module.exports = async (client, message) => {
     });
   }
 
-  command.run(client, message, args).catch((error) => {
+  try {
+    command.run(client, message, args);
+    const now = new Date().getTime();
+    const cooldown = userCooldowns.get(command.name);
+    cooldown.timestamp = now;
+    cooldown.usedAmount++;
+    setTimeout(() => userCooldowns.delete(command.name), command.cooldown * 1000);
+  } catch (error) {
     console.error(error);
     return message.reply("An error occured during execution.");
-  });
+  }
 };
