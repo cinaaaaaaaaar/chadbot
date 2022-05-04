@@ -12,7 +12,7 @@
     "lodash": "^4.17.21",
     "microseconds": "^0.2.0",
     "mongoose": "^5.12.3",
-    "node-superfetch": "^0.2.3",
+    "node-fetch": "^2.6.7",
     "shotstack-sdk": "^0.0.24",
     "sourcebin": "^4.3.5"
   }

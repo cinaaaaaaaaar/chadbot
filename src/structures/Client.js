@@ -34,16 +34,16 @@ class BaseClient extends Client {
     this.init(options.token);
   }
   async init(token) {
-    this.loadCommands();
     this.loadAssets();
     this.loadEvents();
+    await this.loadCommands();
     await this.login(token);
     await this.loadApplicationCommands();
     this.loadedAt = new Date().getTime();
   }
-  loadCommands() {
+  async loadCommands() {
     const categories = readdirSync("./src/commands");
-    categories.forEach(async (category) => {
+    await categories.forEach(async (category) => {
       const module = require(`../commands/${category}/module.json`);
       this.categories.set(module.name, {
         module,
@@ -58,7 +58,9 @@ class BaseClient extends Client {
         this.categories.get(module.name).commands.set(command.name, command);
       });
     });
-    console.log(`Loaded ${this.categories.size} categories.`);
+    console.log(
+      `Loaded ${this.utils.getCommandSize()} commands in ${this.categories.size} categories.`
+    );
   }
   async loadApplicationCommands() {
     const rest = new REST({ version: "9" }).setToken(this.token);

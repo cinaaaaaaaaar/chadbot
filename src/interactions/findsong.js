@@ -1,6 +1,5 @@
 const { SlashCommand, Embed, Client } = require("..");
 const { CommandInteraction } = require("discord.js");
-const { get } = require("node-superfetch");
 class FindsongCommand extends SlashCommand {
   constructor() {
     super({
@@ -27,17 +26,17 @@ class FindsongCommand extends SlashCommand {
     if (!url.isURL() || (!url.includes(".mp3") && !url.includes(".mp4")))
       return interaction.error("Wrong file type, please provide a mp3 or mp4 file.");
     const auddURL = `https://api.audd.io/?api_token=${process.env.AUDD_TOKEN}&url=${url}`;
-    const res = await get(auddURL);
-    if (!res.body.result || res.body.status !== "success")
-      return interaction.error("Unknown song.");
+    const response = await fetch(auddURL);
+    const body = await response.json();
+    if (!body.result || body.status !== "success") return interaction.error("Unknown song.");
     const embed = new Embed()
-      .setTitle(res.body.result.title)
-      .setDescription(`by ${res.body.result.artist}`)
-      .addField("Album", res.body.result.album, true)
-      .addField("Category", res.body.result.label, true)
-      .addField("Found at", res.body.result.timecode, true)
-      .setURL(res.body.result.song_link)
-      .setImage(`${res.body.result.song_link}?thumb`)
+      .setTitle(body.result.title)
+      .setDescription(`by ${body.result.artist}`)
+      .addField("Album", body.result.album, true)
+      .addField("Category", body.result.label, true)
+      .addField("Found at", body.result.timecode, true)
+      .setURL(body.result.song_link)
+      .setImage(`${body.result.song_link}?thumb`)
       .setColor("RANDOM")
       .setFooter({
         text: "Powered by audd.io",

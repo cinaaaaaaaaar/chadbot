@@ -1,6 +1,4 @@
 const { Interaction } = require("discord.js");
-
-const { get } = require("node-superfetch");
 class Utils {
   constructor(client) {
     this.#loadWords();
@@ -18,6 +16,11 @@ class Utils {
     return this.client.categories
       .find((cat) => cat.commands.find(filter))
       ?.commands.find(filter);
+  }
+  getCommandSize() {
+    return this.client.categories
+      .map((cat) => cat.commands.size)
+      .reduce((prev, curr) => prev + curr);
   }
   /**
    *
@@ -40,7 +43,6 @@ class Utils {
     else return interaction.user.displayAvatarURL(urlOptions);
   }
   /**
-   *
    * @param {string} subreddit
    * @param {string} post_hint
    * @param {boolean} nsfw
@@ -48,7 +50,8 @@ class Utils {
    */
   async getPostFromSubreddit(subreddit, post_hint, nsfw = false) {
     const url = `https://reddit.com/r/${subreddit}/top/.json?limit=75`;
-    const { body } = await get(url);
+    const response = await fetch(url);
+    const body = await response.json();
     const filtered = nsfw
       ? body.data.children.filter((x) => x.data.post_hint === post_hint)
       : body.data.children.filter((x) => x.data.post_hint === post_hint && !x.data.over_18);
@@ -59,15 +62,14 @@ class Utils {
     return Math.floor(Math.random() * (max - min)) + min;
   }
   randomWord() {
-    const words = this.words.commonWords.filter((word) => /^.{4,}$/.test(word));
+    const words = this.words.filter((word) => /^.{4,}$/.test(word));
     return words[this.randomNumber(0, words.length)];
   }
   async #loadWords() {
-    this.words = (
-      await get(
-        "https://raw.githubusercontent.com/dariusk/corpora/master/data/words/common.json"
-      )
-    ).body;
+    const response = await fetch(
+      "https://raw.githubusercontent.com/dariusk/corpora/master/data/words/common.json"
+    );
+    this.words = (await response.json()).commonWords;
   }
 }
 

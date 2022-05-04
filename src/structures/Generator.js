@@ -1,7 +1,6 @@
 const { MessageAttachment } = require("discord.js");
 const Embed = require("./Embed");
 const Shotstack = require("shotstack-sdk");
-const { get } = require("node-superfetch");
 const wait = require("util").promisify(setTimeout);
 class Generator {
   constructor(client) {
@@ -38,7 +37,8 @@ class Generator {
         noContentMessages[this.client.utils.randomNumber(0, noContentMessages.length)]
       );
     const URL = `http://api.brainshop.ai/get?bid=155488&key=${process.env.BRAINSHOP_TOKEN}&uid=${message.author.id}&msg=${message.content}`;
-    const { body } = await get(URL);
+    const response = await fetch(URL);
+    const body = response.json();
     message.reply(body.cnt);
   }
 
@@ -48,10 +48,14 @@ class Generator {
     }`;
     let file;
     if (audio) {
-      const { text: id } = await get("https://inspirobot.me/api?getSessionID=1");
-      const { body } = await get(`https://inspirobot.me/api?generateFlow=1&sessionID=${id}`);
+      const response = await fetch("https://inspirobot.me/api?getSessionID=1");
+      const id = await response.text();
+      const audioResponse = await fetch(
+        `https://inspirobot.me/api?generateFlow=1&sessionID=${id}`
+      );
+      const body = await audioResponse.json();
       file = body.mp3;
-    } else file = (await get(URL)).text;
+    } else file = await (await fetch(URL)).text();
     const attachment = new MessageAttachment(file, `quote.${audio ? "mp3" : "jpg"}`);
     interaction.editReply({ files: [attachment] });
   }

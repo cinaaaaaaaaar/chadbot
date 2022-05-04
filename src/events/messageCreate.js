@@ -42,8 +42,8 @@ module.exports = async (client, message) => {
   else {
     const cooldown = userCooldowns.get(command.name);
     const expiry = cooldown.timestamp + command.cooldown * 1000;
-    if (expiry > now && cooldown.usedAmount > 3) {
-      if (cooldown.sentAmount >= 3) return;
+    if (expiry > now && cooldown.usedAmount > 2) {
+      if (cooldown.sentAmount >= 2) return;
       cooldown.sentAmount++;
       const timeLeft = (expiry - now) / 1000;
       const embed = new Embed()
