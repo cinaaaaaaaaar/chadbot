@@ -1,1 +1,1 @@
-This repo was actually a base command handler for my future bots but I couldn't hold to add new features so here you go. I also made a Mongose wrapper to support caching stuff and I added video processing support to test an API I found to manupilate videos with NodeJS.
+This repo was actually a base bot structure for my future projects but I couldn't hold myself to add some other features so here it goes. I also made a Mongose wrapper to support caching stuff and I added video processing support to test an API I found to manupilate videos with NodeJS.
