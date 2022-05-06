@@ -1,1 +1,1 @@
-This repo was actually a base bot structure I developed for my future projects but I couldn't hold myself to add some other features so here it goes. I  made a Mongose wrapper to support caching stuff and I added video processing support to test an API I found to manupilate videos with NodeJS.
+This repo was a base bot structure I developed for my future projects, but I couldn't help myself from adding some other features. I made a Mongoose wrapper to support caching stuff, and I added video processing support to test an API I found to manipulate videos with NodeJS.
