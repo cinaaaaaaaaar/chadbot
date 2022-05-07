@@ -14,7 +14,7 @@ const client = new Client({
   ],
   allowedMentions: { parse: ["users"], repliedUser: false },
 });
-
+require("./api/server")(client);
 module.exports = {
   Command: require("./structures/commands/Command"),
   SlashCommand: require("./structures/commands/SlashCommand"),
