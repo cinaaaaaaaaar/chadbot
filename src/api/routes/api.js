@@ -2,12 +2,12 @@ const express = require("express");
 
 module.exports = (client) => {
   const router = express.Router();
-  const auth = async (req, res, next) => {
-    if (req.headers.token != process.env.DISCORD_TOKEN)
-      return res.status(401).json({ message: "Missing Access" });
-    next();
-  };
-  router.use(auth);
+  // // const auth = async (req, res, next) => {
+  // //   if (req.headers.token != process.env.DISCORD_TOKEN)
+  // //     return res.status(401).json({ message: "Missing Access" });
+  // //   next();
+  // // };
+  // router.use(auth);
   router.get("/commands", (req, res) => {
     const categories = client.categories;
     const slash = client.commands;

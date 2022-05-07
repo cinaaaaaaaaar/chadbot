@@ -4,7 +4,7 @@ class FindsongCommand extends SlashCommand {
   constructor() {
     super({
       name: "find_song",
-      description: "Damn that song's fire! I wonder what is the name of the song.",
+      description: "Damn that song's fire! I wonder the name of the song.",
       options: [
         {
           name: "url",

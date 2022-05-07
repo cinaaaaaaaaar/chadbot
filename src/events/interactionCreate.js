@@ -40,7 +40,7 @@ module.exports = async (client, interaction) => {
 
     command.run(client, interaction, options).catch((error) => {
       console.error(error);
-      interaction.editReply("An error occured during execution");
+      interaction.editReply("An error occurred during execution");
     });
   }
 };
