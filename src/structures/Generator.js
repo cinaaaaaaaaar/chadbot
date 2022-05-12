@@ -2,6 +2,8 @@ const { MessageAttachment } = require("discord.js");
 const Embed = require("./Embed");
 const Shotstack = require("shotstack-sdk");
 const wait = require("util").promisify(setTimeout);
+const { Configuration, OpenAIApi } = require("openai");
+
 class Generator {
   constructor(client) {
     this.client = client;
@@ -25,6 +27,11 @@ class Generator {
   }
 
   async ai(message) {
+    const configuration = new Configuration({
+      apiKey: process.env.OPENAI_KEY,
+    });
+
+    const openai = new OpenAIApi(configuration);
     const noContentMessages = [
       "Say something please.",
       "Give me a word.",
@@ -36,10 +43,29 @@ class Generator {
       return message.reply(
         noContentMessages[this.client.utils.randomNumber(0, noContentMessages.length)]
       );
-    const URL = `http://api.brainshop.ai/get?bid=155488&key=${process.env.BRAINSHOP_TOKEN}&uid=${message.author.id}&msg=${message.content}`;
-    const response = await fetch(URL);
-    const body = response.json();
-    message.reply(body.cnt);
+    const prompts = await this.client.database.get(
+      "users",
+      message.author.id,
+      "aiPromptHistory"
+    );
+    const prompt = `${prompts
+      .map((prompt) => `You: ${prompt.user}\nChadbot: ${prompt.bot}`)
+      .join("\n")}\nYou: ${message.content}\nChadbot:`;
+    const response = await openai.createCompletion("text-davinci-002", {
+      prompt: `Chadbot is a chatbot that reluctantly answers questions with sarcastic responses.\n${prompt}`,
+      temperature: 0.5,
+      max_tokens: 60,
+      top_p: 0.7,
+      frequency_penalty: 2.0,
+      presence_penalty: 2.0,
+    });
+    let text = response.data.choices[0].text;
+    while (/\s|\n/.test(text.charAt(0))) text = text.slice(1);
+    message.reply(text);
+    this.client.database.push("users", message.author.id, "aiPromptHistory", {
+      user: message.content,
+      bot: text,
+    });
   }
 
   async quote(interaction, audio) {

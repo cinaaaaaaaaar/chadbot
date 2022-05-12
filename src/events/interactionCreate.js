@@ -18,13 +18,15 @@ module.exports = async (client, interaction) => {
       !command.permissions.every((v) => interaction.member.permissions.toArray().includes(v))
     )
       return interaction.editReply({
-        embed: {
-          title: "Missing Permissions",
-          description: `**Required:** ${command.permissions
-            .map((x) => `\`${x}\``)
-            .join(", ")}`,
-          color: "e84d3f",
-        },
+        embeds: [
+          {
+            title: "Missing Permissions",
+            description: `**Required:** ${command.permissions
+              .map((x) => `\`${x}\``)
+              .join(", ")}`,
+            color: "e84d3f",
+          },
+        ],
       });
 
     if (!interaction.channel.nsfw && command.nsfw)

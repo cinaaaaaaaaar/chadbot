@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Cache = require("./Cache");
 const { uniq } = require("lodash");
+const { Collection } = require("discord.js");
+
 class Database {
   constructor(uri) {
     mongoose
@@ -26,7 +28,7 @@ class Database {
    * @param {string} schema
    * @param {string} id
    * @param {string} key
-   * @returns Collection
+   * @returns {Collection}
    */
   async get(schema, id, key) {
     const data = this.cache[schema].get(id) || (await this.saveToCacheOrCreate(schema, id));
@@ -38,7 +40,7 @@ class Database {
    * @param {string} id
    * @param {string} key
    * @param {any} value
-   * @returns Collection
+   * @returns {Collection}
    */
   async set(schema, id, key, value) {
     const Schema = this.schemas[schema];
@@ -53,7 +55,7 @@ class Database {
    * @param {string} id
    * @param {string} key
    * @param {any} value
-   * @returns Collection
+   * @returns {Collection}
    */
   async push(schema, id, key, value) {
     const current = await this.get(schema, id, key);
@@ -67,8 +69,19 @@ class Database {
    * @param {string} schema
    * @param {string} id
    * @param {string} key
+   * @returns
+   */
+  async delete(schema, id, key) {
+    const defaultData = this.schemas[schema].schema.obj[key].default;
+    return this.set(schema, id, key, defaultData);
+  }
+  /**
+   *
+   * @param {string} schema
+   * @param {string} id
+   * @param {string} key
    * @param {any} value
-   * @returns Collection
+   * @returns {Collection}
    */
   async remove(schema, id, key, value) {
     let current = await this.get(schema, id, key);

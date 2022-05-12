@@ -9,7 +9,7 @@ class ChatbotChannelCommand extends SlashCommand {
       options: [
         {
           name: "channel",
-          description: "The channel that the bot will listen for messages",
+          description: "The channel that the bot will watch for messages",
           type: "CHANNEL",
           required: true,
         },

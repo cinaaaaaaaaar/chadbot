@@ -15,6 +15,7 @@
     "microseconds": "^0.2.0",
     "mongoose": "^5.12.3",
     "node-fetch": "^2.6.7",
+    "openai": "^2.0.5",
     "shotstack-sdk": "^0.0.24",
     "sourcebin": "^4.3.5"
   }

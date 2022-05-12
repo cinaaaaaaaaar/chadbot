@@ -40,16 +40,9 @@ class HelpCommand extends Command {
         aliases.length > 0
           ? aliases.map((alias) => `\`${alias}\``).join(" | ")
           : "No aliases.";
-      const required = args
-        ? args.required
-          ? args.required.map((arg) => `\`${arg.name}\``).join(" | ")
-          : "None"
-        : "None";
-      const optional = args
-        ? args.optional
-          ? args.optional.map((arg) => `\`${arg}\``).join(" | ")
-          : "None"
-        : "None";
+      const required = args?.required?.map((arg) => `\`${arg.name}\``).join(" | ") || "None";
+      const optional = args?.optional?.map((arg) => `\`${arg}\``).join(" | ") || "None";
+
       const formattedArgs = `Required: ${required}\nOptional: ${optional}`;
       const formattedPermissions =
         permissions.map((permission) => `\`${permission}\``).join(" | ") || "`NONE`";

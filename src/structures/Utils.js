@@ -8,6 +8,22 @@ class Utils {
    * @param {string} query
    * @param {boolean} filterOwnerOnly
    */
+  getWeightedProbability(weights) {
+    let total = 0;
+    weights.forEach((weight) => {
+      total += weight;
+    });
+    let normalized = weights.map((weight) => weight / total);
+    for (let i = 1; i < weights.length; i++) {
+      normalized[i] = normalized[i - 1] + normalized[i];
+    }
+    const random = Math.random();
+    let i = 0;
+    while (i < normalized.length && random > normalized[i]) {
+      i++;
+    }
+    return i;
+  }
   findCommand(query, filterOwnerOnly = false) {
     let filter = (cmd) => cmd.name === query || cmd.aliases.includes(query);
     if (filterOwnerOnly)

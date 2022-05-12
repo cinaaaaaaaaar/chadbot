@@ -19,5 +19,5 @@ module.exports = {
   Command: require("./structures/commands/Command"),
   SlashCommand: require("./structures/commands/SlashCommand"),
   Embed: require("./structures/Embed"),
-  Client,
+  Client: client,
 };

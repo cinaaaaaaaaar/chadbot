@@ -1,0 +1,58 @@
+{
+  "minecraft": {
+    "surface": [
+      {
+        "emoji": "<:grass:783036411532148737>",
+        "rarity": 90
+      },
+      {
+        "emoji": "<:chest:835190794276569109>",
+        "rarity": 3
+      },
+      {
+        "emoji": "<:villager:835191074875375616>",
+        "rarity": 2
+      },
+      {
+        "emoji": "<:log:783038246689964083>",
+        "rarity": 5
+      }
+    ],
+    "mine": [
+      {
+        "emoji": "<:stone:782010771738984520>",
+        "rarity": 90
+      },
+      {
+        "emoji": "<:chest:835190794276569109>",
+        "rarity": 3
+      },
+      {
+        "emoji": "<:diamond_ore:782008748989612052>",
+        "rarity": 1
+      },
+      {
+        "emoji": "<:lava:782008910348812289>",
+        "rarity": 1
+      },
+      {
+        "emoji": "<:coal_ore:782009655827234856>",
+        "rarity": 5
+      }
+    ],
+    "steve": "<:steve:974015190817464330>",
+    "steve_canceled": "<:steve_canceled:974015193313058916>",
+    "steve_timeout": "<:steve_timeout:974016150457438248>"
+  },
+  "shop": {
+    "phone": "<:phone:852282274791555072>",
+    "camera": "<:camera:852282285264076810>",
+    "slots": "🎰",
+    "ticket": "🎟",
+    "detector": "<:detector:852283687114244106>",
+    "gold": "<:gold:852282281363767306>",
+    "iron": "<:iron:852285573813239848>",
+    "scrap": "<:scrap:852288250106478612>"
+  },
+  "x": "<:x_sign:974058119871209493>"
+}
