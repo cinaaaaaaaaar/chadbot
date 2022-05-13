@@ -20,5 +20,11 @@ module.exports = (client) => {
       ping: client.ws.ping,
     });
   });
+  router.get("/ai", async (req, res) => {
+    const response = await client.generator.ai(req.query.content, req.query.id);
+    res.status(200).json({
+      response,
+    });
+  });
   return router;
 };

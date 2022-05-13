@@ -45,4 +45,5 @@ module.exports = async (client, interaction) => {
       interaction.editReply("An error occurred during execution");
     });
   }
+  if (interaction.isButton()) interaction.deferUpdate();
 };

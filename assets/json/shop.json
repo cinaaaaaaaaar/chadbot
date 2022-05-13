@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Editing License",
+    "id": "license",
+    "price": 10000,
+    "description": "Removes the watermark from your edited videos.",
+    "purchasable": true
+  },
+  {
+    "name": "Coal",
+    "id": "coal",
+    "description": "Burn 'em with your thermal reactor!",
+    "price": 400,
+    "purchasable": true
+  },
+  {
+    "name": "Iron",
+    "id": "iron",
+    "description": "Craft thermal reactors with them.",
+    "price": 750,
+    "purchasable": true
+  },
+  {
+    "name": "Gold",
+    "id": "gold",
+    "description": "Sell 'em and get rich!",
+    "price": 4000,
+    "purchasable": false
+  },
+  {
+    "name": "Diamond",
+    "id": "diamond",
+    "description": "Sell 'em and get double rich!",
+    "price": 8000,
+    "purchasable": false
+  },
+  {
+    "name": "Emerald",
+    "id": "emerald",
+    "description": "Sell 'em and get triple rich!",
+    "price": 12000,
+    "purchasable": false
+  }
+]

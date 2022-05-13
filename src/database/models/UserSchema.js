@@ -9,6 +9,10 @@ const Schema = new mongoose.Schema({
     type: Array,
     default: [],
   },
+  inventory: {
+    type: Array,
+    default: [],
+  },
 });
 
 module.exports = mongoose.model("users", Schema);

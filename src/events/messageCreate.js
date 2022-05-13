@@ -26,7 +26,11 @@ module.exports = async (client, message) => {
       `My ${prefixes.length > 1 ? "prefixes are" : "prefix is"} \`${prefixes.join(", ")}\``
     );
 
-  if (aiChannels.includes(channelID)) return client.generator.ai(message);
+  if (aiChannels.includes(channelID)) {
+    message.channel.sendTyping();
+    const response = await client.generator.ai(message.content, message.author.id);
+    return message.reply(response);
+  }
   if (!prefix) return;
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g);
@@ -95,6 +99,6 @@ module.exports = async (client, message) => {
     setTimeout(() => userCooldowns.delete(command.name), command.cooldown * 1000);
   } catch (error) {
     console.error(error);
-    return message.reply("An error occured during execution.");
+    return message.reply("An error occurred during execution.");
   }
 };

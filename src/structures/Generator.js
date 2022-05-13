@@ -26,7 +26,7 @@ class Generator {
     return (await api.getRender(render.response.id)).response.url;
   }
 
-  async ai(message) {
+  async ai(content, id) {
     const configuration = new Configuration({
       apiKey: process.env.OPENAI_KEY,
     });
@@ -38,19 +38,13 @@ class Generator {
       "Say more to me please.",
       "Sorry, I didn't catch what you said. Could you please repeat it again?",
     ];
-    message.channel.sendTyping();
-    if (!message.content)
-      return message.reply(
-        noContentMessages[this.client.utils.randomNumber(0, noContentMessages.length)]
-      );
-    const prompts = await this.client.database.get(
-      "users",
-      message.author.id,
-      "aiPromptHistory"
-    );
+    if (!content)
+      return noContentMessages[this.client.utils.randomNumber(0, noContentMessages.length)];
+
+    const prompts = await this.client.database.get("users", id, "aiPromptHistory");
     const prompt = `${prompts
       .map((prompt) => `You: ${prompt.user}\nChadbot: ${prompt.bot}`)
-      .join("\n")}\nYou: ${message.content}\nChadbot:`;
+      .join("\n")}\nYou: ${content}\nChadbot:`;
     const response = await openai.createCompletion("text-davinci-002", {
       prompt: `Chadbot is a chatbot that reluctantly answers questions with sarcastic responses.\n${prompt}`,
       temperature: 0.5,
@@ -61,11 +55,11 @@ class Generator {
     });
     let text = response.data.choices[0].text;
     while (/\s|\n/.test(text.charAt(0))) text = text.slice(1);
-    message.reply(text);
-    this.client.database.push("users", message.author.id, "aiPromptHistory", {
-      user: message.content,
+    this.client.database.push("users", id, "aiPromptHistory", {
+      user: content,
       bot: text,
     });
+    return text;
   }
 
   async quote(interaction, audio) {

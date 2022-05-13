@@ -15,7 +15,6 @@ class Database {
         console.log("Connected to the database.");
         this.connectedAt = new Date().getTime();
         this.connection = data.connection;
-        this.models = data.models;
         this.cache = new Cache();
       });
     this.schemas = {
@@ -28,7 +27,6 @@ class Database {
    * @param {string} schema
    * @param {string} id
    * @param {string} key
-   * @returns {Collection}
    */
   async get(schema, id, key) {
     const data = this.cache[schema].get(id) || (await this.saveToCacheOrCreate(schema, id));
@@ -55,7 +53,7 @@ class Database {
    * @param {string} id
    * @param {string} key
    * @param {any} value
-   * @returns {Collection}
+   * @returns {any[]}
    */
   async push(schema, id, key, value) {
     const current = await this.get(schema, id, key);
@@ -69,7 +67,7 @@ class Database {
    * @param {string} schema
    * @param {string} id
    * @param {string} key
-   * @returns
+   * @returns {Collection}
    */
   async delete(schema, id, key) {
     const defaultData = this.schemas[schema].schema.obj[key].default;
@@ -81,7 +79,7 @@ class Database {
    * @param {string} id
    * @param {string} key
    * @param {any} value
-   * @returns {Collection}
+   * @returns {any[]}
    */
   async remove(schema, id, key, value) {
     let current = await this.get(schema, id, key);
@@ -90,17 +88,51 @@ class Database {
     current = current.remove(value);
     return await this.set(schema, id, key, uniq(current));
   }
+  /**
+   * @typedef {Object} item
+   * @property {string} id
+   * @property {integer} amount
+   */
+  /**
+   *
+   * @param {string} id
+   * @param {item} item
+   */
+  async addToInv(user, item) {
+    const id = item.id;
+    const amount = item.amount > 0 ? item.amount : 1;
+    let inventory = await this.get("users", user, "inventory");
+    const existingItem = inventory.find((x) => x.id == id);
+    if (existingItem) {
+      await this.remove("users", user, "inventory", existingItem);
+      existingItem.amount += amount;
+    } else inventory.push({ id, amount });
+    this.set("users", user, "inventory", inventory);
+  }
+  /**
+   *
+   * @param {string} id
+   * @param {item} item
+   */
+  async removeFromInv(user, item) {
+    const id = item.id;
+    const amount = item.amount > 0 ? item.amount : 1;
+    let inventory = await this.get("users", user, "inventory");
+    const existingItem = inventory.find((x) => x.id == id);
+    if (existingItem) {
+      existingItem.amount -= amount;
+      await this.remove("users", user, "inventory", existingItem);
+    } else inventory = inventory.remove({ id, amount });
+    this.set("users", user, "inventory", inventory);
+  }
   async saveToCacheOrCreate(schema, id) {
     const Schema = this.schemas[schema];
     const existingData = await Schema.findById(id).lean();
     let data = this.cache[schema].get(id);
     if (!existingData) {
-      data = await Schema.create({ _id: id });
-      data = this.cache.save(
-        schema,
-        id,
-        Object.filter(data._doc, (x) => !x[0].startsWith("_"))
-      );
+      await Schema.create({ _id: id });
+      data = await Schema.findById(id).lean();
+      data = this.cache.save(schema, id, data);
     } else if (!data) data = this.cache.save(schema, id, existingData);
     return data;
   }

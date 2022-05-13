@@ -13,29 +13,11 @@ const arrows = [
   "974057605234327573",
 ];
 const TIMEOUT_DURATION = 30;
-class MinecraftCommand extends SlashCommand {
+class MineCommand extends SlashCommand {
   constructor() {
     super({
-      name: "minecraft",
+      name: "mine",
       description: "Play Minecraft inside Discord! Collected items can be sold later.",
-      options: [
-        {
-          name: "terrain",
-          description: "The terrain to start the game",
-          required: true,
-          type: "STRING",
-          choices: [
-            {
-              name: "surface",
-              value: "surface",
-            },
-            {
-              name: "mine",
-              value: "mine",
-            },
-          ],
-        },
-      ],
     });
   }
   /**
@@ -46,7 +28,7 @@ class MinecraftCommand extends SlashCommand {
    */
   async run(client, interaction, options) {
     const emotes = client.assets.json.emotes.minecraft;
-    const blocks = emotes[options[0]];
+    const blocks = emotes.mine;
     const game = new BaseGame(
       { x: 100, y: 100 },
       { x: 5, y: 5 },
@@ -79,7 +61,6 @@ class MinecraftCommand extends SlashCommand {
 
     collector.on("collect", async (collected) => {
       if (sent.id !== collected.message.id) return;
-      collected.deferUpdate();
       if (collected.user.id != interaction.user.id)
         return collected.reply({
           content: "Only the author of the command can control the game",
@@ -88,16 +69,16 @@ class MinecraftCommand extends SlashCommand {
       lastCollected = new Date().getTime();
       switch (collected.customId) {
         case "0":
-          game.moveChar(-1, 0);
+          moveAndCollect(-1, 0);
           break;
         case "1":
-          game.moveChar(0, -1);
+          moveAndCollect(0, -1);
           break;
         case "2":
-          game.moveChar(0, 1);
+          moveAndCollect(0, 1);
           break;
         case "3":
-          game.moveChar(1, 0);
+          moveAndCollect(1, 0);
           break;
         case "cancel":
           endGame(emotes.steve_canceled, "cancel");
@@ -106,12 +87,14 @@ class MinecraftCommand extends SlashCommand {
       if (collected.customId !== "cancel")
         sent.edit({ content: game.render(), components: [row] });
     });
+
     const interval = setInterval(() => {
       const now = new Date().getTime();
       if (game.canceled || collector.ended) clearInterval(interval);
       if (now - lastCollected > TIMEOUT_DURATION * 1000 && !game.canceled)
         endGame(emotes.steve_timeout, "timeout");
     }, 1000);
+
     collector.on("end", async (_, reason) => {
       if (reason === "timeout")
         interaction.channel.send(
@@ -119,6 +102,22 @@ class MinecraftCommand extends SlashCommand {
         );
       if (reason === "cancel") interaction.channel.send("Canceled the game");
     });
+
+    async function moveAndCollect(x, y) {
+      game.moveChar(x, y);
+      for (let i = 0; i < blocks.length; i++) {
+        if (game.view[game.charLocation.y][game.charLocation.x] == i && blocks[i].id) {
+          game.map[game.charLocation.y + game.viewLocation.y][
+            game.charLocation.x + game.viewLocation.x
+          ] = 0;
+          game.view[game.charLocation.y][game.charLocation.x] = 0;
+          await client.database.addToInv(interaction.user.id, {
+            id: blocks[i].id,
+            amount: 1,
+          });
+        }
+      }
+    }
     async function endGame(emoji, reason) {
       collector.stop(reason);
       game.canceled = true;
@@ -135,4 +134,4 @@ class MinecraftCommand extends SlashCommand {
   }
 }
 
-module.exports = MinecraftCommand;
+module.exports = MineCommand;
