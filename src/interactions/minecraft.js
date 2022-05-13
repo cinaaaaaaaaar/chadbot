@@ -5,7 +5,7 @@ const {
   MessageActionRow,
   InteractionCollector,
 } = require("discord.js");
-const MinecordGame = require("../structures/games/BaseGame");
+const BaseGame = require("../structures/games/BaseGame");
 const arrows = [
   "974057604999438466",
   "974057605523726336",
@@ -47,7 +47,7 @@ class MinecraftCommand extends SlashCommand {
   async run(client, interaction, options) {
     const emotes = client.assets.json.emotes.minecraft;
     const blocks = emotes[options[0]];
-    const game = new MinecordGame(
+    const game = new BaseGame(
       { x: 100, y: 100 },
       { x: 5, y: 5 },
       {
