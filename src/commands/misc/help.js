@@ -18,17 +18,19 @@ class HelpCommand extends Command {
    * @param {any[]} args
    */
   async run(client, message, args) {
-    const embed = new Embed();
     const prefix = (await client.database.get("guilds", message.guild.id, "prefixes"))[0];
+    const embed = new Embed().setDescription(
+      `Type \`${prefix}help_slash\` to view slash commands`
+    );
     const categories = client.categories.filter((x) => !x.module.hide);
     const category = categories
       .filter((x) => !x.module.hide)
       .find((x) => x.module.name == args[0] || x.module.aliases.includes(args[0]));
     const command = client.utils.findCommand(args[0], true);
     if (category?.module.nsfw && !message.channel.nsfw)
-      return message.error("This category includes NSFW content.");
+      return message.error("This category contains NSFW content.");
     if (command?.nsfw && !message.channel.nsfw)
-      return message.error("This command includes NSFW content.");
+      return message.error("This command contains NSFW content.");
     if (category)
       embed
         .setTitle(`${category.module.name.upperFirstChar()} (${category.commands.size})`)

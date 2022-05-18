@@ -1,4 +1,4 @@
-const { Interaction } = require("discord.js");
+const { Interaction, MessageButton, MessageActionRow } = require("discord.js");
 class Utils {
   constructor(client) {
     this.#loadWords();
@@ -23,6 +23,25 @@ class Utils {
       i++;
     }
     return i;
+  }
+  addArrowButtons(arrows, addCancel = false) {
+    const buttons = [];
+    arrows.forEach((arrow, i) => {
+      const button = new MessageButton()
+        .setEmoji(arrow)
+        .setStyle("PRIMARY")
+        .setCustomId(i.toString());
+      buttons.push(button);
+    });
+    if (addCancel) {
+      const cancel = new MessageButton()
+        .setEmoji(this.client.assets.json.emotes.buttons.cancel)
+        .setStyle("DANGER")
+        .setCustomId("cancel");
+      buttons.push(cancel);
+    }
+    const row = new MessageActionRow().setComponents(buttons);
+    return row;
   }
   findCommand(query, filterOwnerOnly = false) {
     let filter = (cmd) => cmd.name === query || cmd.aliases.includes(query);

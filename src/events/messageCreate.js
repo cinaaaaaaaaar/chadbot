@@ -17,7 +17,7 @@ module.exports = async (client, message) => {
   const prefixes = await client.database.get("guilds", guildID, "prefixes");
   const aiChannels = await client.database.get("guilds", guildID, "aiChannels");
   const prefix = prefixes.find((x) => message.content.startsWith(x));
-
+  const aiConfig = aiChannels.find((x) => x.id == channelID);
   if (
     message.content.split(" ")[0].isMention() &&
     message.mentions.users.first().id == client.user.id
@@ -26,9 +26,13 @@ module.exports = async (client, message) => {
       `My ${prefixes.length > 1 ? "prefixes are" : "prefix is"} \`${prefixes.join(", ")}\``
     );
 
-  if (aiChannels.includes(channelID)) {
+  if (aiConfig) {
     message.channel.sendTyping();
-    const response = await client.generator.ai(message.content, message.author.id);
+    const response = await client.generator.ai(
+      message.content,
+      aiConfig.character,
+      message.author.id
+    );
     return message.reply(response);
   }
   if (!prefix) return;
@@ -39,8 +43,9 @@ module.exports = async (client, message) => {
   if (!command) return;
 
   const now = new Date().getTime();
-  if (!client.cooldowns.has(authorID)) client.cooldowns.set(authorID, new Collection());
-  const userCooldowns = client.cooldowns.get(authorID);
+  if (!client.cooldowns.message.has(authorID))
+    client.cooldowns.message.set(authorID, new Collection());
+  const userCooldowns = client.cooldowns.message.get(authorID);
   if (!userCooldowns.has(command.name))
     userCooldowns.set(command.name, { timestamp: now, usedAmount: 1, sentAmount: 0 });
   else {

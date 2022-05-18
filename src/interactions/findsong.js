@@ -1,5 +1,5 @@
 const { SlashCommand, Embed, Client } = require("..");
-const { CommandInteraction } = require("discord.js");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
 class FindsongCommand extends SlashCommand {
   constructor() {
     super({
@@ -7,10 +7,16 @@ class FindsongCommand extends SlashCommand {
       description: "Damn that song's fire! I wonder the name of the song.",
       options: [
         {
+          name: "file",
+          description: "The attachment that contains the song you are looking for",
+          type: "ATTACHMENT",
+          required: false,
+        },
+        {
           name: "url",
-          description: "The URL of the song you are looking for",
+          description: "The URL that contains the song you are looking for",
           type: "STRING",
-          required: true,
+          required: false,
         },
       ],
     });
@@ -19,12 +25,25 @@ class FindsongCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
-    let url = options[0];
-    if (!url.isURL() || (!url.includes(".mp3") && !url.includes(".mp4")))
-      return interaction.error("Wrong file type, please provide a mp3 or mp4 file.");
+  async run(client, interaction, args, options) {
+    const url = options.resolved.attachments?.first().url || options.get("url").value;
+    if (!url) return interaction.error("Please enter a audio/video attachment or URL");
+    const fileType = url.split(/[#?]/)[0].split(".").pop().trim();
+    const supportedFormats = {
+      audio: ["mp3", "wav", "m4a"],
+      video: ["mp4", "mov"],
+    };
+    const joined = supportedFormats.audio
+      .concat(supportedFormats.video)
+      .map((x) => `\`${x}\``)
+      .join(", ");
+    if (!supportedFormats.audio.concat(supportedFormats.video).includes(fileType))
+      return interaction.error(
+        `Unsupported file format.\nSupported file formats are: ${joined}`
+      );
     const auddURL = `https://api.audd.io/?api_token=${process.env.AUDD_TOKEN}&url=${url}`;
     const response = await fetch(auddURL);
     const body = await response.json();

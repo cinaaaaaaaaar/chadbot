@@ -1,5 +1,5 @@
 const { SlashCommand, Client } = require("..");
-const { CommandInteraction } = require("discord.js");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
 class ChatbotChannelCommand extends SlashCommand {
   constructor() {
     super({
@@ -14,6 +14,22 @@ class ChatbotChannelCommand extends SlashCommand {
           required: true,
         },
         {
+          name: "character",
+          description: "The personality of the bot.",
+          type: "STRING",
+          required: true,
+          choices: [
+            {
+              name: "Friendly",
+              value: "friendly",
+            },
+            {
+              name: "Sarcastic",
+              value: "sarcastic",
+            },
+          ],
+        },
+        {
           name: "status",
           description: "Choose whether you enable or disable the feature",
           type: "BOOLEAN",
@@ -26,17 +42,37 @@ class ChatbotChannelCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
-    const channel = interaction.guild.channels.cache.get(options[0]);
+  async run(client, interaction, args) {
+    const channel = interaction.guild.channels.cache.get(args[0]);
+    const channels = await client.database.get("guilds", interaction.guild.id, "aiChannels");
+    let existingConfig = channels.find((x) => x.id == channel.id);
     if (channel.type !== "GUILD_TEXT")
       return interaction.editReply(`Please input a text channel`);
-    if (options[1]) {
-      client.database.push("guilds", interaction.guild.id, "aiChannels", channel.id);
-      interaction.editReply(`I've added ${channel} to the chatbot list.`);
+    if (args[2]) {
+      if (existingConfig) {
+        await client.database.remove(
+          "guilds",
+          interaction.guild.id,
+          "aiChannels",
+          existingConfig
+        );
+        existingConfig.character = args[1];
+        client.database.push("guilds", interaction.guild.id, "aiChannels", existingConfig);
+        interaction.editReply(
+          `I've updated the personality of ${channel} to ${args[1].toLowerCase()}`
+        );
+      } else {
+        client.database.push("guilds", interaction.guild.id, "aiChannels", {
+          id: channel.id,
+          character: args[1],
+        });
+        interaction.editReply(`I've added ${channel} to the chatbot list.`);
+      }
     } else {
-      client.database.remove("guilds", interaction.guild.id, "aiChannels", channel.id);
+      client.database.remove("guilds", interaction.guild.id, "aiChannels", existingConfig);
       interaction.editReply(`I've removed ${channel} from the chatbot list.`);
     }
   }

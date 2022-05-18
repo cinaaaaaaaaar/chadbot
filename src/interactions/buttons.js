@@ -1,5 +1,10 @@
 const { SlashCommand, Client } = require("..");
-const { MessageButton, MessageActionRow, InteractionCollector } = require("discord.js");
+const {
+  MessageButton,
+  MessageActionRow,
+  InteractionCollector,
+  CommandInteractionOptionResolver,
+} = require("discord.js");
 const styles = {
   Blurple: "PRIMARY",
   Gray: "SECONDARY",
@@ -50,34 +55,34 @@ class ButtonCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
-    if (options[0].length > 2000)
+  async run(client, interaction, args) {
+    if (args[0].length > 2000)
       return interaction.editReply({
         content: "Content can be maximum of 2,000 characters long.",
         ephemeral: true,
       });
-    if (options[1].length > 80)
+    if (args[1].length > 80)
       return interaction.editReply({
         content: "Labels can be maximum of 80 characters long.",
         ephemeral: true,
       });
 
     const button = new MessageButton()
-      .setLabel(options[1])
-      .setStyle(styles[options[2]])
+      .setLabel(args[1])
+      .setStyle(styles[args[2]])
       .setCustomId("custom_button");
     const row = new MessageActionRow().addComponents(button);
-    interaction.editReply({ content: options[0], components: [row] });
+    interaction.editReply({ content: args[0], components: [row] });
 
     const collector = new InteractionCollector(client, {
       componentType: "BUTTON",
     });
     collector.on("collect", (buttonInteraction) => {
       if (buttonInteraction.customId === "custom_button") {
-        if (options[3] && client.config.owners.includes(buttonInteraction.user.id))
-          eval(options[3]);
+        if (args[3] && client.config.owners.includes(buttonInteraction.user.id)) eval(args[3]);
         else {
           buttonInteraction.reply({
             content: "You pressed a button!",

@@ -1,5 +1,9 @@
 const { SlashCommand, Client } = require("..");
-const { CommandInteraction, MessageCollector } = require("discord.js");
+const {
+  CommandInteraction,
+  MessageCollector,
+  CommandInteractionOptionResolver,
+} = require("discord.js");
 class FasttypeCommand extends SlashCommand {
   constructor() {
     super({
@@ -11,7 +15,8 @@ class FasttypeCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
   async run(client, interaction) {
     const words = [];

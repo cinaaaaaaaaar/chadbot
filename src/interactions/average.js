@@ -1,5 +1,9 @@
 const { SlashCommand, Client } = require("..");
-const { CommandInteraction, MessageAttachment } = require("discord.js");
+const {
+  CommandInteraction,
+  MessageAttachment,
+  CommandInteractionOptionResolver,
+} = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
 class AverageCommand extends SlashCommand {
   constructor() {
@@ -26,10 +30,11 @@ class AverageCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
-    if (options[0].length > 32 || options[1].length > 32)
+  async run(client, interaction, args) {
+    if (args[0].length > 32 || args[1].length > 32)
       return interaction.error("Text is longer than 32 characters");
     const source = client.assets.json.urls.video.average;
     const length = await getLength(source);
@@ -51,7 +56,7 @@ class AverageCommand extends SlashCommand {
                   offset: { x: 0.25, y: 0.55 },
                   position: "topLeft",
                   size: "small",
-                  text: options[0].wrap(16),
+                  text: args[0].wrap(16),
                   type: "title",
                   style: "subtitle",
                 },
@@ -68,7 +73,7 @@ class AverageCommand extends SlashCommand {
                   offset: { x: -0.25, y: 0.55 },
                   position: "topRight",
                   size: "small",
-                  text: options[1].wrap(16),
+                  text: args[1].wrap(16),
                   type: "title",
                   style: "subtitle",
                 },

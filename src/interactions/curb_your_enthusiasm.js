@@ -1,25 +1,35 @@
 const { SlashCommand, Client } = require("..");
-const { CommandInteraction, MessageAttachment } = require("discord.js");
+const {
+  CommandInteraction,
+  MessageAttachment,
+  CommandInteractionOptionResolver,
+} = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
 
 class CurbYourEnthusiasmCommand extends SlashCommand {
   constructor() {
     super({
       name: "curb_your_enthusiasm",
-      description: "Adds the curb your enthusiasm ending to the end of the given image/video",
+      description: "Adds the curb your enthusiasm ending to the end of the given video",
 
       options: [
         {
+          name: "video",
+          description: "The video you want to input",
+          type: "ATTACHMENT",
+          required: false,
+        },
+        {
           name: "url",
-          description: "The URL to the asset you want to input",
+          description: "The url of the video you want to input",
           type: "STRING",
-          required: true,
+          required: false,
         },
         {
           name: "second",
           description: "The second you want to start the outro.",
           type: "NUMBER",
-          required: true,
+          required: false,
         },
       ],
     });
@@ -28,29 +38,27 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
+  async run(client, interaction, args, options) {
     const videoAsset = client.assets.json.urls.video.curb_your_enthusiasm;
     const audioAsset = client.assets.json.urls.audio.curb_your_enthusiasm;
-    const url = options[0];
+    const url = options.resolved.attachments?.first().url || options.get("url").value;
+    if (!url) return interaction.error("Enter a video attachment or URL.");
     const fileType = url.split(/[#?]/)[0].split(".").pop().trim();
-    const supportedFormats = {
-      image: ["jpg", "jpeg", "png", "bmp"],
-      video: ["mp4", "mov"],
-    };
-    if (!supportedFormats.image.concat(supportedFormats.video).includes(fileType))
-      return interaction.error("Unsupported file format");
-    const type = supportedFormats.image.includes(fileType)
-      ? "image"
-      : supportedFormats.video.includes(fileType)
-      ? "video"
-      : "audio";
-    let length = options[1];
-    if (!length) length = await getLength(url);
-
-    if (length > (await getLength(url)))
-      return interaction.error("Duration is longer than given video");
+    const supportedFormats = ["mp4", "mov"];
+    if (!supportedFormats.includes(fileType))
+      return interaction
+        .error(
+          `Unsupported file format.\nSupported file formats are: ${supportedFormats.map(
+            (x) => `\`${x}\``
+          )}`
+        )
+        .join(", ");
+    let length = await getLength(url);
+    let duration = options.get("second").value || length;
+    if (duration > length) return interaction.error("Duration is longer than given video");
 
     const data = {
       output: {
@@ -68,11 +76,11 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
                 asset: {
                   src: url,
                   volume: 1,
-                  type,
+                  type: "video",
                 },
                 fit: "contain",
                 start: 0,
-                length,
+                length: duration,
               },
               {
                 asset: {
@@ -80,7 +88,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
                   src: videoAsset,
                 },
                 length: await getLength(videoAsset),
-                start: length,
+                start: duration,
               },
               {
                 asset: {
@@ -88,7 +96,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
                   src: audioAsset,
                 },
                 length: await getLength(audioAsset),
-                start: length - (length * 2) / 10,
+                start: duration - (duration * 2) / 10,
               },
             ],
           },

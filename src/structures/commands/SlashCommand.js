@@ -10,6 +10,7 @@ class SlashCommand {
    * @property {string} name
    * @property {string} description
    * @property {OptionsResolvable} [options]
+   * @property {number} [cooldown]
    * @property {boolean} [nsfw]
    * @property {PermissionResolvable[]} [permissions]
    */
@@ -21,6 +22,7 @@ class SlashCommand {
     this.name = options.name;
     this.description = options.description;
     this.options = options.options || [];
+    this.cooldown = options.cooldown || 5;
     this.nsfw = options.nsfw || false;
     this.permissions = options.permissions || [];
   }

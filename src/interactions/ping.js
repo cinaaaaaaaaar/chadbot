@@ -1,5 +1,5 @@
 const { SlashCommand, Client } = require("../..");
-const { CommandInteraction } = require("discord.js");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
 const μs = require("microseconds");
 class PingCommand extends SlashCommand {
   constructor() {
@@ -12,7 +12,8 @@ class PingCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
   async run(client, interaction) {
     const sent = await interaction.editReply(":ping_pong: Pinging...");

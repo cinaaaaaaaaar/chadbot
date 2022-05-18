@@ -1,5 +1,5 @@
 const { SlashCommand, Client } = require("..");
-const { CommandInteraction } = require("discord.js");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
 class QuoteCommand extends SlashCommand {
   constructor() {
     super({
@@ -19,10 +19,11 @@ class QuoteCommand extends SlashCommand {
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {Array} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
-    client.generator.quote(interaction, options[0]);
+  async run(client, interaction, args) {
+    client.generator.quote(interaction, args[0]);
   }
 }
 

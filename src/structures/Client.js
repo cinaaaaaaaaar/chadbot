@@ -24,7 +24,10 @@ class BaseClient extends Client {
     super(options);
     this.commands = new Collection();
     this.categories = new Collection();
-    this.cooldowns = new Collection();
+    this.cooldowns = {
+      message: new Collection(),
+      slash: new Collection(),
+    };
     this.config = require("../../config.json");
     this.package = require("../../package.json");
     this.database = new Database(process.env.MONGO_URI);

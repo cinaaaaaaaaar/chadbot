@@ -26,7 +26,7 @@ class Generator {
     return (await api.getRender(render.response.id)).response.url;
   }
 
-  async ai(content, id) {
+  async ai(content, character, id) {
     const configuration = new Configuration({
       apiKey: process.env.OPENAI_KEY,
     });
@@ -45,13 +45,18 @@ class Generator {
     const prompt = `${prompts
       .map((prompt) => `You: ${prompt.user}\nChadbot: ${prompt.bot}`)
       .join("\n")}\nYou: ${content}\nChadbot:`;
+    const characters = {
+      friendly: "Chadbot is a friendly chatbot that simulates talking to a friend.",
+      sarcastic:
+        "Chadbot is a chatbot that reluctantly answers questions with sarcastic responses.",
+    };
     const response = await openai.createCompletion("text-davinci-002", {
-      prompt: `Chadbot is a chatbot that reluctantly answers questions with sarcastic responses.\n${prompt}`,
+      prompt: `${characters[character]}\n${prompt}`,
       temperature: 0.5,
-      max_tokens: 60,
+      max_tokens: 200,
       top_p: 0.7,
-      frequency_penalty: 2.0,
-      presence_penalty: 2.0,
+      frequency_penalty: 1.5,
+      presence_penalty: 1.5,
     });
     let text = response.data.choices[0].text;
     while (/\s|\n/.test(text.charAt(0))) text = text.slice(1);

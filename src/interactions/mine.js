@@ -1,32 +1,28 @@
 const { SlashCommand, Client } = require("..");
 const {
   CommandInteraction,
-  MessageButton,
-  MessageActionRow,
   InteractionCollector,
+  CommandInteractionOptionResolver,
 } = require("discord.js");
 const BaseGame = require("../structures/games/BaseGame");
-const arrows = [
-  "974057604999438466",
-  "974057605523726336",
-  "974057605506945074",
-  "974057605234327573",
-];
+
 const TIMEOUT_DURATION = 30;
 class MineCommand extends SlashCommand {
   constructor() {
     super({
       name: "mine",
       description: "Play Minecraft inside Discord! Collected items can be sold later.",
+      cooldown: 15,
     });
   }
   /**
    *
    * @param {Client} client
    * @param {CommandInteraction} interaction
-   * @param {any[]} options
+   * @param {Array} args
+   * @param {CommandInteractionOptionResolver} options
    */
-  async run(client, interaction, options) {
+  async run(client, interaction) {
     const emotes = client.assets.json.emotes.minecraft;
     const blocks = emotes.mine;
     const game = new BaseGame(
@@ -38,34 +34,16 @@ class MineCommand extends SlashCommand {
       },
       client
     );
-    const buttons = [];
-    arrows.forEach((arrow, i) => {
-      const button = new MessageButton()
-        .setEmoji(arrow)
-        .setStyle("PRIMARY")
-        .setCustomId(i.toString());
-      buttons.push(button);
-    });
-    const cancel = new MessageButton()
-      .setEmoji(client.assets.json.emotes.x)
-      .setStyle("DANGER")
-      .setCustomId("cancel");
-    buttons.push(cancel);
-    const row = new MessageActionRow().setComponents(buttons);
+    const row = client.utils.addArrowButtons(client.assets.json.emotes.buttons.arrows, true);
     const sent = await interaction.editReply({ content: game.render(), components: [row] });
 
     const collector = new InteractionCollector(client, {
       componentType: "BUTTON",
+      message: sent,
+      filter: (collected) => collected.user.id == interaction.user.id,
     });
     let lastCollected = new Date().getTime();
-
     collector.on("collect", async (collected) => {
-      if (sent.id !== collected.message.id) return;
-      if (collected.user.id != interaction.user.id)
-        return collected.reply({
-          content: "Only the author of the command can control the game",
-          ephemeral: true,
-        });
       lastCollected = new Date().getTime();
       switch (collected.customId) {
         case "0":
@@ -97,10 +75,9 @@ class MineCommand extends SlashCommand {
 
     collector.on("end", async (_, reason) => {
       if (reason === "timeout")
-        interaction.channel.send(
-          `The game was canceled due to ${TIMEOUT_DURATION} seconds of inactivity`
+        interaction.user.send(
+          `The game was canceled due to ${TIMEOUT_DURATION} seconds of inactivity. [${new Date().toLocaleTimeString()}]`
         );
-      if (reason === "cancel") interaction.channel.send("Canceled the game");
     });
 
     async function moveAndCollect(x, y) {
@@ -121,11 +98,11 @@ class MineCommand extends SlashCommand {
     async function endGame(emoji, reason) {
       collector.stop(reason);
       game.canceled = true;
-      buttons.map((button) => {
+      row.components.map((button) => {
         button.disabled = true;
         button.style = "SECONDARY";
       });
-      row.setComponents([buttons]);
+      row.setComponents([row.components]);
       sent.edit({
         content: game.render().replace(game.emojis.character, emoji),
         components: [row],

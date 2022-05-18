@@ -1,6 +1,6 @@
 {
-  "name": "misc",
-  "aliases": ["miscellaneous", "general"],
+  "name": "general",
+  "aliases": ["miscellaneous", "misc"],
   "description": "Commands that don't fit to other categories.",
   "hide": false
 }

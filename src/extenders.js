@@ -24,7 +24,8 @@ CommandInteraction.prototype.error = async function (error) {
       },
     ],
   };
-  return await this.reply(content);
+  if (this.deferred || this.replied) return await this.editReply(content);
+  else return await this.reply(content);
 };
 
 String.prototype.wrap = function (width) {
@@ -79,17 +80,16 @@ String.prototype.upperFirstChar = function () {
   return this.charAt(0).toUpperCase() + this.slice(1).toLowerCase();
 };
 
-Array.prototype.pagify = function (limit) {
-  newArray = [];
-
+Array.prototype.paginate = function (limit) {
+  const pages = [];
   for (let i = 0; i < this.length; i++) {
     if (i % limit === 0) {
-      newArray.push([]);
+      pages.push([]);
     }
     let index = Math.floor(i / limit);
-    newArray[index].push(this[i]);
+    pages[index].push(this[i]);
   }
-  return newArray;
+  return pages;
 };
 
 Array.prototype.remove = function (value) {
