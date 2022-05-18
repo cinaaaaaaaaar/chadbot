@@ -6,6 +6,7 @@ class QuoteCommand extends SlashCommand {
       name: "generate_quote",
       description:
         "Sends an AI generated quote with a random image in the background. Nonsense warning!",
+      cooldown: 10,
       options: [
         {
           name: "audio",

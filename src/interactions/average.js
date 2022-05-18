@@ -10,6 +10,7 @@ class AverageCommand extends SlashCommand {
     super({
       name: "average",
       description: "Average Fan vs Average Enjoyer ",
+      cooldown: 20,
       options: [
         {
           name: "text-1",

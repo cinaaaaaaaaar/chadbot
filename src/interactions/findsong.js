@@ -5,6 +5,7 @@ class FindsongCommand extends SlashCommand {
     super({
       name: "find_song",
       description: "Damn that song's fire! I wonder the name of the song.",
+      cooldown: 15,
       options: [
         {
           name: "file",

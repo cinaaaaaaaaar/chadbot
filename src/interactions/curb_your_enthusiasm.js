@@ -11,7 +11,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
     super({
       name: "curb_your_enthusiasm",
       description: "Adds the curb your enthusiasm ending to the end of the given video",
-
+      cooldown: 20,
       options: [
         {
           name: "video",
