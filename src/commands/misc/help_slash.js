@@ -32,9 +32,7 @@ class HelpSlashCommand extends Command {
           data.permissions.map((permission) => `\`${permission}\``).join(" | ") || "None";
         embed.addField(
           `/${name}`,
-          `**Description:** ${data.description}
-          **Cooldown:** ${data.cooldown} seconds
-          **Permissions:** ${permissions}`
+          `**Description:** ${data.description}\n**Cooldown:** ${data.cooldown} seconds\n**Permissions:** ${permissions}`
         );
       });
       embeds.push(embed);

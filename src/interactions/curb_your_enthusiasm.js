@@ -46,7 +46,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
     const audioAsset = client.assets.json.urls.audio.curb_your_enthusiasm;
     const url = options.resolved.attachments?.first().url || options.get("url").value;
     if (!url) return interaction.error("Enter a video attachment or URL.");
-    const fileType = url.split(/[#?]/)[0].split(".").pop().trim();
+    const fileType = url.split(/[#?]/)[0].split(".").pop().trim().toLowerCase();
     const supportedFormats = ["mp4", "mov"];
     if (!supportedFormats.includes(fileType))
       return interaction
