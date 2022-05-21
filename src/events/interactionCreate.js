@@ -10,6 +10,8 @@ const { Client, Embed } = require("..");
 module.exports = async (client, interaction) => {
   const userID = interaction.user.id;
   if (interaction.isCommand()) {
+    if (!interaction.guild)
+      await interaction.reply("Slash commands can only be used in servers.");
     await interaction.deferReply();
     const command = client.commands.get(interaction.commandName);
     const options = interaction.options.data.map((data) => data.value);
