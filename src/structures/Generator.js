@@ -50,21 +50,25 @@ class Generator {
       sarcastic:
         "Chadbot is a chatbot that reluctantly answers questions with sarcastic responses.",
     };
-    const response = await openai.createCompletion("text-davinci-002", {
-      prompt: `${characters[character]}\n${prompt}`,
-      temperature: 0.5,
-      max_tokens: 200,
-      top_p: 0.7,
-      frequency_penalty: 1.5,
-      presence_penalty: 1.5,
-    });
-    let text = response.data.choices[0].text;
-    while (/\s|\n/.test(text.charAt(0))) text = text.slice(1);
-    this.client.database.push("users", id, "aiPromptHistory", {
-      user: content,
-      bot: text,
-    });
-    return text;
+    try {
+      const response = await openai.createCompletion("text-davinci-002", {
+        prompt: `${characters[character]}\n${prompt}`,
+        temperature: 0.5,
+        max_tokens: 200,
+        top_p: 0.7,
+        frequency_penalty: 1.5,
+        presence_penalty: 1.5,
+      });
+      let text = response.data.choices[0].text;
+      while (/\s|\n/.test(text.charAt(0))) text = text.slice(1);
+      this.client.database.push("users", id, "aiPromptHistory", {
+        user: content,
+        bot: text,
+      });
+      return text;
+    } catch {
+      return false;
+    }
   }
 
   async quote(interaction, audio) {

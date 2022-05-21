@@ -33,6 +33,7 @@ module.exports = async (client, message) => {
       aiConfig.character,
       message.author.id
     );
+    if (!response) message.error("Failed to get response.", "Encountered an Error");
     return message.reply(response);
   }
   if (!prefix) return;

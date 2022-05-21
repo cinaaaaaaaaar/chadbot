@@ -14,11 +14,11 @@ Message.prototype.error = async function (error, title) {
   return await this.reply(content);
 };
 
-CommandInteraction.prototype.error = async function (error) {
+CommandInteraction.prototype.error = async function (error, title) {
   const content = {
     embeds: [
       {
-        title: "Wrong Usage",
+        title: title || "Wrong Usage",
         description: "```" + error + "```",
         color: "e84d3f",
       },
