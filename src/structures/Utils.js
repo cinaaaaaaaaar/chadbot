@@ -1,8 +1,31 @@
 const { Interaction, MessageButton, MessageActionRow } = require("discord.js-light");
+const Search = require("fuzzysearch-js");
+let levenshteinFS = require("fuzzysearch-js/js/modules/LevenshteinFS");
+let indexOfFS = require("fuzzysearch-js/js/modules/IndexOfFS");
+let wordCountFS = require("fuzzysearch-js/js/modules/WordCountFS");
+
 class Utils {
+  /**
+   *
+   * @param {Client} client
+   */
   constructor(client) {
     this.#loadWords();
     this.client = client;
+  }
+  /**
+   *
+   * @param {string[]} data
+   * @param {string} query
+   */
+  autocomplete(data, query) {
+    if (data.includes(query)) return query;
+    const search = new Search(data, { minimumScore: 300 });
+    search.addModule(levenshteinFS({ maxDistanceTolerance: 3, factor: 3 }));
+    search.addModule(indexOfFS({ minTermLength: 3, maxIterations: 500, factor: 3 }));
+    search.addModule(wordCountFS({ maxWordTolerance: 3, factor: 1 }));
+    const result = search.search(query)?.[0].value;
+    return result;
   }
   /**
    * @param {string} query
@@ -44,13 +67,21 @@ class Utils {
     return row;
   }
   findCommand(query, filterOwnerOnly = false) {
-    let filter = (cmd) => cmd.name === query || cmd.aliases.includes(query);
-    if (filterOwnerOnly)
-      filter = (cmd) =>
-        cmd.name === query || (cmd.aliases.includes(query) && cmd.ownerOnly === false);
-    return this.client.categories
-      .find((cat) => cat.commands.find(filter))
-      ?.commands.find(filter);
+    const data = [];
+    const categories = filterOwnerOnly
+      ? this.client.categories.filter((category) => !category.module.hide)
+      : this.client.categories;
+    categories.forEach((category) => {
+      category.commands.forEach((command) => {
+        data.push(command.name);
+        command.aliases.forEach((alias) => {
+          data.push(alias);
+        });
+      });
+    });
+    const command = this.autocomplete(data, query);
+    let filter = (cmd) => cmd.name === command || cmd.aliases.includes(command);
+    return categories.find((cat) => cat.commands.find(filter))?.commands.find(filter);
   }
   getCommandSize() {
     return this.client.categories
