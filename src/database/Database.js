@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Cache = require("./Cache");
 const { uniq } = require("lodash");
-const { Collection } = require("discord.js");
+const { Collection } = require("discord.js-light");
 
 class Database {
   constructor(uri) {

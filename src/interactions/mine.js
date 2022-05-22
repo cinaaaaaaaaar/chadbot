@@ -76,7 +76,7 @@ class MineCommand extends SlashCommand {
     collector.on("end", async (_, reason) => {
       if (reason === "timeout")
         interaction.user.send(
-          `The game was canceled due to ${TIMEOUT_DURATION} seconds of inactivity. [${new Date().toLocaleTimeString()}]`
+          `The game was canceled due to ${TIMEOUT_DURATION} seconds of inactivity. [UTC ${new Date().toLocaleTimeString()}]`
         );
     });
 

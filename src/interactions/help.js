@@ -3,7 +3,7 @@ const {
   CommandInteraction,
   CommandInteractionOptionResolver,
   InteractionCollector,
-} = require("discord.js");
+} = require("discord.js-light");
 class HelpCommand extends SlashCommand {
   constructor() {
     super({

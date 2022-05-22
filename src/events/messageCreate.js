@@ -1,4 +1,4 @@
-const { Message, Collection } = require("discord.js");
+const { Message, Collection } = require("discord.js-light");
 const { Embed } = require("..");
 const Client = require("../structures/Client");
 

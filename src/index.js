@@ -1,4 +1,4 @@
-const { Intents } = require("discord.js");
+const { Intents, Options } = require("discord.js-light");
 const Client = require("./structures/Client");
 require("dotenv-flow").config();
 require("./extenders");
@@ -7,11 +7,33 @@ const client = new Client({
   intents: [
     Intents.FLAGS.GUILDS,
     Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.GUILD_VOICE_STATES,
     Intents.FLAGS.GUILD_PRESENCES,
     Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
   ],
+  makeCache: Options.cacheWithLimits({
+    ApplicationCommandManager: Infinity,
+    BaseGuildEmojiManager: 0,
+    ChannelManager: Infinity,
+    GuildBanManager: 0,
+    GuildChannelManager: Infinity,
+    GuildEmojiManager: Infinity,
+    GuildInviteManager: Infinity,
+    GuildManager: Infinity,
+    GuildMemberManager: Infinity,
+    GuildScheduledEventManager: 0,
+    GuildStickerManager: 0,
+    MessageManager: 25,
+    PermissionOverwriteManager: 0,
+    PresenceManager: 0,
+    ReactionManager: 0,
+    ReactionUserManager: 0,
+    RoleManager: 0,
+    StageInstanceManager: 0,
+    ThreadManager: 0,
+    ThreadMemberManager: 0,
+    UserManager: Infinity,
+    VoiceStateManager: 0,
+  }),
   allowedMentions: { parse: ["users"], repliedUser: false },
 });
 require("./api/server")(client);

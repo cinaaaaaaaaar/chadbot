@@ -1,5 +1,5 @@
 const { SlashCommand, Embed, Client } = require("..");
-const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js-light");
 class FindsongCommand extends SlashCommand {
   constructor() {
     super({

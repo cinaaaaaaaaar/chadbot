@@ -1,4 +1,4 @@
-const { MessageAttachment } = require("discord.js");
+const { MessageAttachment } = require("discord.js-light");
 const Embed = require("./Embed");
 const Shotstack = require("shotstack-sdk");
 const wait = require("util").promisify(setTimeout);

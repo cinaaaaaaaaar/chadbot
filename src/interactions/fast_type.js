@@ -3,7 +3,7 @@ const {
   CommandInteraction,
   MessageCollector,
   CommandInteractionOptionResolver,
-} = require("discord.js");
+} = require("discord.js-light");
 class FasttypeCommand extends SlashCommand {
   constructor() {
     super({

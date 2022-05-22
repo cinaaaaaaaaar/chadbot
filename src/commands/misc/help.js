@@ -1,5 +1,5 @@
 const { Command, Embed, Client } = require("../..");
-const { Message } = require("discord.js");
+const { Message } = require("discord.js-light");
 class HelpCommand extends Command {
   constructor() {
     super({

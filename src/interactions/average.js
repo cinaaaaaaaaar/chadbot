@@ -3,7 +3,7 @@ const {
   CommandInteraction,
   MessageAttachment,
   CommandInteractionOptionResolver,
-} = require("discord.js");
+} = require("discord.js-light");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
 class AverageCommand extends SlashCommand {
   constructor() {

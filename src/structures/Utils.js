@@ -1,4 +1,4 @@
-const { Interaction, MessageButton, MessageActionRow } = require("discord.js");
+const { Interaction, MessageButton, MessageActionRow } = require("discord.js-light");
 class Utils {
   constructor(client) {
     this.#loadWords();

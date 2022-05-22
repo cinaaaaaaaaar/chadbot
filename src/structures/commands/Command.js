@@ -1,4 +1,4 @@
-const { PermissionResolvable } = require("discord.js");
+const { PermissionResolvable } = require("discord.js-light");
 class Command {
   /**
    *

@@ -1,4 +1,4 @@
-const { Client, Collection } = require("discord.js");
+const { Client, Collection } = require("discord.js-light");
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const Database = require("../database/Database");
@@ -20,6 +20,10 @@ const types = {
 };
 
 class BaseClient extends Client {
+  /**
+   *
+   * @param {import("discord.js-light").ClientOptions} options
+   */
   constructor(options) {
     super(options);
     this.commands = new Collection();
