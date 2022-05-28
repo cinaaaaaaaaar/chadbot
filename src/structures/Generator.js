@@ -1,31 +1,20 @@
-const { MessageAttachment } = require("discord.js-light");
+const { MessageAttachment, CommandInteraction } = require("discord.js-light");
 const Embed = require("./Embed");
-const Shotstack = require("shotstack-sdk");
-const wait = require("util").promisify(setTimeout);
 const { Configuration, OpenAIApi } = require("openai");
+const VideoGenerator = require("./VideoGenerator");
 
 class Generator {
   constructor(client) {
     this.client = client;
-    const env = client.config.shotstack_env;
-    const defaultClient = Shotstack.ApiClient.instance;
-    const DeveloperKey = defaultClient.authentications["DeveloperKey"];
-    DeveloperKey.apiKey =
-      env === "v1" ? process.env.SHOTSTACK_PROD_TOKEN : process.env.SHOTSTACK_STAGE_TOKEN;
-    defaultClient.basePath = `https://api.shotstack.io/${env}`;
+    this.video = new VideoGenerator(8000);
   }
-
-  async render(data) {
-    const api = new Shotstack.EditApi();
-    const render = await api.postRender(data);
-    let status = await api.getRender(render.response.id);
-    while (status.response.status !== "done") {
-      await wait(5000);
-      status = await api.getRender(render.response.id);
-    }
-    return (await api.getRender(render.response.id)).response.url;
-  }
-
+  /**
+   *
+   * @param {string} content
+   * @param {string} character
+   * @param {string} id
+   * @returns
+   */
   async ai(content, character, id) {
     const configuration = new Configuration({
       apiKey: process.env.OPENAI_KEY,
@@ -70,7 +59,11 @@ class Generator {
       return false;
     }
   }
-
+  /**
+   *
+   * @param {CommandInteraction} interaction
+   * @param {boolean} audio
+   */
   async quote(interaction, audio) {
     const URL = `https://inspirobot.me/api?generate=true${
       new Date().getMonth() == 11 ? "&season=xmas" : ""

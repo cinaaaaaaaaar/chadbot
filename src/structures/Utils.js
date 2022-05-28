@@ -3,7 +3,7 @@ const Search = require("fuzzysearch-js");
 let levenshteinFS = require("fuzzysearch-js/js/modules/LevenshteinFS");
 let indexOfFS = require("fuzzysearch-js/js/modules/IndexOfFS");
 let wordCountFS = require("fuzzysearch-js/js/modules/WordCountFS");
-
+const mime = require("mime-types");
 class Utils {
   /**
    *
@@ -122,6 +122,16 @@ class Utils {
       ? body.data.children.filter((x) => x.data.post_hint === post_hint)
       : body.data.children.filter((x) => x.data.post_hint === post_hint && !x.data.over_18);
     return filtered[randomNumber(0, filtered.length - 1)].data;
+  }
+  async validateType(url, types) {
+    try {
+      const response = await fetch(url);
+      const mimetype = response.headers.get("content-type");
+      const type = mime.extension(mimetype);
+      return types.includes(type);
+    } catch {
+      return false;
+    }
   }
   randomNumber(min, max) {
     min = min ?? 0;

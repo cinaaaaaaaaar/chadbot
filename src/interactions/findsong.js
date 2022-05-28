@@ -32,18 +32,10 @@ class FindsongCommand extends SlashCommand {
   async run(client, interaction, args, options) {
     const url = options.resolved.attachments?.first().url || options.get("url").value;
     if (!url) return interaction.error("Please enter a audio/video attachment or URL");
-    const fileType = url.split(/[#?]/)[0].split(".").pop().trim().toLowerCase();
-    const supportedFormats = {
-      audio: ["mp3", "wav", "m4a"],
-      video: ["mp4", "mov"],
-    };
-    const joined = supportedFormats.audio
-      .concat(supportedFormats.video)
-      .map((x) => `\`${x}\``)
-      .join(", ");
-    if (!supportedFormats.audio.concat(supportedFormats.video).includes(fileType))
+    const supportedFormats = ["mp3", "wav", "m4a", "mp4", "mov"];
+    if (!(await client.utils.validateType(url, supportedFormats)))
       return interaction.error(
-        `Unsupported file format.\nSupported file formats are: ${joined}`
+        `Unsupported file format.\nSupported file formats are: ${supportedFormats.join(", ")}`
       );
     const auddURL = `https://api.audd.io/?api_token=${process.env.AUDD_TOKEN}&url=${url}`;
     const response = await fetch(auddURL);

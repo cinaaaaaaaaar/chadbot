@@ -37,70 +37,8 @@ class AverageCommand extends SlashCommand {
   async run(client, interaction, args) {
     if (args[0].length > 32 || args[1].length > 32)
       return interaction.error("Text is longer than 32 characters");
-    const source = client.assets.json.urls.video.average;
-    const length = await getLength(source);
-    const data = {
-      output: {
-        format: "mp4",
-        size: {
-          width: 720,
-          height: 720,
-        },
-      },
-      timeline: {
-        tracks: [
-          {
-            clips: [
-              {
-                asset: {
-                  color: "#000000",
-                  offset: { x: 0.25, y: 0.55 },
-                  position: "topLeft",
-                  size: "small",
-                  text: args[0].wrap(16),
-                  type: "title",
-                  style: "subtitle",
-                },
-                start: 0,
-                length,
-              },
-            ],
-          },
-          {
-            clips: [
-              {
-                asset: {
-                  color: "#000000",
-                  offset: { x: -0.25, y: 0.55 },
-                  position: "topRight",
-                  size: "small",
-                  text: args[1].wrap(16),
-                  type: "title",
-                  style: "subtitle",
-                },
 
-                start: 0,
-                length,
-              },
-            ],
-          },
-          {
-            clips: [
-              {
-                asset: {
-                  src: source,
-                  type: "video",
-                  volume: 1,
-                },
-                start: 0,
-                length,
-              },
-            ],
-          },
-        ],
-      },
-    };
-    const render = await client.generator.render(data);
+    const render = await client.generator.video.average(args);
     const video = new MessageAttachment(render, "average.mp4");
     interaction.editReply({ files: [video] });
   }

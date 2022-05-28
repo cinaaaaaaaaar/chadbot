@@ -5,6 +5,7 @@ const {
   CommandInteractionOptionResolver,
 } = require("discord.js-light");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
+const { rmSync } = require("fs");
 
 class CurbYourEnthusiasmCommand extends SlashCommand {
   constructor() {
@@ -42,71 +43,23 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
    * @param {CommandInteractionOptionResolver} options
    */
   async run(client, interaction, args, options) {
-    const videoAsset = client.assets.json.urls.video.curb_your_enthusiasm;
-    const audioAsset = client.assets.json.urls.audio.curb_your_enthusiasm;
     const url = options.resolved.attachments?.first().url || options.get("url").value;
     if (!url) return interaction.error("Enter a video attachment or URL.");
-    const fileType = url.split(/[#?]/)[0].split(".").pop().trim().toLowerCase();
-    const supportedFormats = ["mp4", "mov"];
-    if (!supportedFormats.includes(fileType))
-      return interaction
-        .error(
-          `Unsupported file format.\nSupported file formats are: ${supportedFormats.map(
-            (x) => `\`${x}\``
-          )}`
-        )
-        .join(", ");
+    const supportedFormats = ["mp4", "mov", "avi", "webm"];
+    if (!(await client.utils.validateType(url, supportedFormats)))
+      return interaction.error(
+        `Unsupported file format.\nSupported file formats are: ${supportedFormats.join(", ")}`
+      );
     let length = await getLength(url);
-    let duration = options.get("second").value || length;
+    let duration = options.get("second")?.value || length;
     if (duration > length) return interaction.error("Duration is longer than given video");
 
-    const data = {
-      output: {
-        format: "mp4",
-        size: {
-          width: 720,
-          height: 720,
-        },
-      },
-      timeline: {
-        tracks: [
-          {
-            clips: [
-              {
-                asset: {
-                  src: url,
-                  volume: 1,
-                  type: "video",
-                },
-                fit: "contain",
-                start: 0,
-                length: duration,
-              },
-              {
-                asset: {
-                  type: "video",
-                  src: videoAsset,
-                },
-                length: await getLength(videoAsset),
-                start: duration,
-              },
-              {
-                asset: {
-                  type: "audio",
-                  src: audioAsset,
-                },
-                length: await getLength(audioAsset),
-                start: duration - (duration * 2) / 10,
-              },
-            ],
-          },
-        ],
-      },
-    };
-
-    const render = await client.generator.render(data);
-    const video = new MessageAttachment(render, "curb_your_enthusiasm.mp4");
-    interaction.editReply({ files: [video] });
+    const path = await client.generator.video.curb_your_enthusiasm(url, duration);
+    const video = new MessageAttachment(path, "curb_your_enthusiasm.mp4");
+    await interaction.editReply({ files: [video] });
+    rmSync(path, {
+      force: true,
+    });
   }
 }
 
