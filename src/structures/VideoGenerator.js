@@ -1,3 +1,5 @@
+const { deburr } = require("lodash");
+
 class VideoGenerator {
   constructor(port) {
     this.url = `http://localhost:${port}`;
@@ -7,6 +9,7 @@ class VideoGenerator {
     return path;
   }
   async average(text) {
+    text = text.map((x) => deburr(x));
     const path = await this.getResponse("/average", { text1: text[0], text2: text[1] });
     return path;
   }
