@@ -30,7 +30,7 @@ class FindsongCommand extends SlashCommand {
    * @param {CommandInteractionOptionResolver} options
    */
   async run(client, interaction, args, options) {
-    const url = options.resolved.attachments?.first().url || options.get("url").value;
+    const url = options.resolved.attachments?.first().url || options.get("url")?.value;
     if (!url) return interaction.error("Please enter a audio/video attachment or URL");
     const supportedFormats = ["mp3", "wav", "m4a", "mp4", "mov"];
     if (!(await client.utils.validateType(url, supportedFormats)))

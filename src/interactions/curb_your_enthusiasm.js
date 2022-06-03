@@ -43,7 +43,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
    * @param {CommandInteractionOptionResolver} options
    */
   async run(client, interaction, args, options) {
-    const url = options.resolved.attachments?.first().url || options.get("url").value;
+    const url = options.resolved.attachments?.first().url || options.get("url")?.value;
     if (!url) return interaction.error("Enter a video attachment or URL.");
     const supportedFormats = ["mp4", "mov", "avi", "webm"];
     if (!(await client.utils.validateType(url, supportedFormats)))
