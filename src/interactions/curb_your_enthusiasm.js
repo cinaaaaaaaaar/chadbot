@@ -44,7 +44,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
   async run(client, interaction, args, options) {
     const videoAsset = client.assets.json.urls.video.curb_your_enthusiasm;
     const audioAsset = client.assets.json.urls.audio.curb_your_enthusiasm;
-    const url = options.resolved.attachments?.first().url || options.get("url").value;
+    const url = options.resolved.attachments?.first().url || options.get("url")?.value;
     if (!url) return interaction.error("Enter a video attachment or URL.");
     const fileType = url.split(/[#?]/)[0].split(".").pop().trim().toLowerCase();
     const supportedFormats = ["mp4", "mov"];
@@ -57,7 +57,7 @@ class CurbYourEnthusiasmCommand extends SlashCommand {
         )
         .join(", ");
     let length = await getLength(url);
-    let duration = options.get("second").value || length;
+    let duration = options.get("second")?.value || length;
     if (duration > length) return interaction.error("Duration is longer than given video");
 
     const data = {
