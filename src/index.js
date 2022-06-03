@@ -1,6 +1,6 @@
 const { Intents, Options } = require("discord.js-light");
 const Client = require("./structures/Client");
-require("dotenv-flow").config();
+require("dotenv").config();
 require("./extenders");
 const client = new Client({
   token: process.env.DISCORD_TOKEN,
