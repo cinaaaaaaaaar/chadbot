@@ -46,33 +46,7 @@ class HelpCommand extends SlashCommand {
       });
       embeds.push(embed);
     });
-    const arrows = client.assets.json.emotes.buttons.arrows;
-    const row = client.utils.addArrowButtons([arrows[0], arrows[3]], true);
-    const sent = await interaction.editReply({ embeds: [embeds[page]], components: [row] });
-    const collector = new InteractionCollector(client, {
-      componentType: "BUTTON",
-      message: sent,
-      filter: (collected) => collected.user.id == interaction.user.id,
-    });
-    collector.on("collect", (collected) => {
-      switch (collected.customId) {
-        case "0":
-          page--;
-          page = page < 0 ? pages.length - 1 : page;
-          break;
-        case "1":
-          page++;
-          page = page > pages.length - 1 ? 0 : page;
-          break;
-        case "cancel":
-          row.components.map((button) => {
-            button.disabled = true;
-            button.style = "SECONDARY";
-          });
-          break;
-      }
-      sent.edit({ embeds: [embeds[page]], components: [row] });
-    });
+    client.utils.paginate(interaction, interaction.user, embeds, page);
   }
 }
 

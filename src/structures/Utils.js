@@ -1,4 +1,9 @@
-const { Interaction, MessageButton, MessageActionRow } = require("discord.js-light");
+const {
+  Interaction,
+  MessageButton,
+  MessageActionRow,
+  InteractionCollector,
+} = require("discord.js-light");
 const Search = require("fuzzysearch-js");
 let levenshteinFS = require("fuzzysearch-js/js/modules/LevenshteinFS");
 let indexOfFS = require("fuzzysearch-js/js/modules/IndexOfFS");
@@ -46,6 +51,38 @@ class Utils {
       i++;
     }
     return i;
+  }
+  async paginate(request, user, embeds, page = 0) {
+    const arrows = this.client.assets.json.emotes.buttons.arrows;
+    const row = this.addArrowButtons([arrows[0], arrows[3]], true);
+    const sent = await request[request instanceof Interaction ? "editReply" : "reply"]({
+      embeds: [embeds[page]],
+      components: [row],
+    });
+    const collector = new InteractionCollector(this.client, {
+      componentType: "BUTTON",
+      message: sent,
+      filter: (collected) => collected.user.id == user.id,
+    });
+    collector.on("collect", (collected) => {
+      switch (collected.customId) {
+        case "0":
+          page--;
+          page = page < 0 ? embeds.length - 1 : page;
+          break;
+        case "1":
+          page++;
+          page = page > embeds.length - 1 ? 0 : page;
+          break;
+        case "cancel":
+          row.components.map((button) => {
+            button.disabled = true;
+            button.style = "SECONDARY";
+          });
+          break;
+      }
+      sent.edit({ embeds: [embeds[page]], components: [row] });
+    });
   }
   addArrowButtons(arrows, addCancel = false) {
     const buttons = [];

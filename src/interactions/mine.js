@@ -3,7 +3,7 @@ const {
   CommandInteraction,
   InteractionCollector,
   CommandInteractionOptionResolver,
-} = require("discord.js");
+} = require("discord.js-light");
 const BaseGame = require("../structures/games/BaseGame");
 
 const TIMEOUT_DURATION = 30;

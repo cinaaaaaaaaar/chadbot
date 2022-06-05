@@ -3,7 +3,7 @@ const {
     prototype: { options: OptionsResolvable },
   },
   PermissionResolvable,
-} = require("discord.js-light");
+} = require("discord.js");
 class SlashCommand {
   /**
    * @typedef {Object} CommandOptions
