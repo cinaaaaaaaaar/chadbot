@@ -1,5 +1,5 @@
 const { Command, Client } = require("../..");
-const { Message } = require("discord.js-light");
+const { Message } = require("discord.js");
 class ClearPromptHistoryCommand extends Command {
   constructor() {
     super({

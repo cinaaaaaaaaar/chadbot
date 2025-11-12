@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Cache = require("./Cache");
 const { uniq } = require("lodash");
-const { Collection } = require("discord.js-light");
+const { Collection } = require("discord.js");
 
 class Database {
   constructor(uri) {
@@ -9,7 +9,6 @@ class Database {
       .connect(uri, {
         useUnifiedTopology: true,
         useNewUrlParser: true,
-        useFindAndModify: false,
       })
       .then((data) => {
         console.log("Connected to the database.");

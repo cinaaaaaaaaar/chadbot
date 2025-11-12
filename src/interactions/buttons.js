@@ -4,7 +4,7 @@ const {
   MessageActionRow,
   InteractionCollector,
   CommandInteractionOptionResolver,
-} = require("discord.js-light");
+} = require("discord.js");
 const styles = {
   Blurple: "PRIMARY",
   Gray: "SECONDARY",

@@ -1,5 +1,5 @@
 const { SlashCommand, Client } = require("../..");
-const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js-light");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
 const μs = require("microseconds");
 class PingCommand extends SlashCommand {
   constructor() {

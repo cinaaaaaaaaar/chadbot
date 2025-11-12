@@ -1,4 +1,4 @@
-const { CommandInteraction, Collection } = require("discord.js-light");
+const { CommandInteraction, Collection } = require("discord.js");
 const { Client, Embed } = require("..");
 
 /**

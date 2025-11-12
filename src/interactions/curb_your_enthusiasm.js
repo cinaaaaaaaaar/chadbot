@@ -3,7 +3,7 @@ const {
   CommandInteraction,
   MessageAttachment,
   CommandInteractionOptionResolver,
-} = require("discord.js-light");
+} = require("discord.js");
 const { getVideoDurationInSeconds: getLength } = require("get-video-duration");
 
 class CurbYourEnthusiasmCommand extends SlashCommand {

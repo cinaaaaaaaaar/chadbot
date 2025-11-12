@@ -1,6 +1,6 @@
 const { Command } = require("../..");
 
-const { Message } = require("discord.js-light");
+const { Message } = require("discord.js");
 const μs = require("microseconds");
 class PingCommand extends Command {
   constructor() {
