@@ -22,5 +22,8 @@
     "openai": "^4.85.1",
     "shotstack-sdk": "^0.0.24",
     "sourcebin": "^4.3.5"
+  },
+  "overrides": {
+    "@ffprobe-installer/ffprobe": "^2.1.2"
   }
 }
