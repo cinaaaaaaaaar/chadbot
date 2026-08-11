@@ -1,5 +1,5 @@
 const letters = require("../assets/json/flipped");
-const { CommandInteraction, Message } = require("discord.js-light");
+const { CommandInteraction, Message } = require("discord.js");
 global.fetch = require("node-fetch");
 Message.prototype.error = async function (error, title) {
   const content = {

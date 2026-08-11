@@ -1,5 +1,5 @@
 const { SlashCommand, Client, Embed } = require("..");
-const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js-light");
+const { CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
 class InventoryCommand extends SlashCommand {
   constructor() {
     super({

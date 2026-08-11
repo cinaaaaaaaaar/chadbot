@@ -1,4 +1,4 @@
-const { Collection } = require("discord.js-light");
+const { Collection } = require("discord.js");
 class Cache {
   constructor() {
     this.users = new Collection();

@@ -1,4 +1,4 @@
-const { MessageAttachment, CommandInteraction } = require("discord.js-light");
+const { MessageAttachment } = require("discord.js");
 const Embed = require("./Embed");
 const { Configuration, OpenAIApi } = require("openai");
 const VideoGenerator = require("./VideoGenerator");

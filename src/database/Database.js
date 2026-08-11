@@ -1,22 +1,16 @@
 const mongoose = require("mongoose");
 const Cache = require("./Cache");
 const { uniq } = require("lodash");
-const { Collection } = require("discord.js-light");
+const { Collection } = require("discord.js");
 
 class Database {
   constructor(uri) {
-    mongoose
-      .connect(uri, {
-        useUnifiedTopology: true,
-        useNewUrlParser: true,
-        useFindAndModify: false,
-      })
-      .then((data) => {
-        console.log("Connected to the database.");
-        this.connectedAt = new Date().getTime();
-        this.connection = data.connection;
-        this.cache = new Cache();
-      });
+    mongoose.connect(uri, {}).then((data) => {
+      console.log("Connected to the database.");
+      this.connectedAt = new Date().getTime();
+      this.connection = data.connection;
+      this.cache = new Cache();
+    });
     this.schemas = {
       users: require("./models/UserSchema"),
       guilds: require("./models/GuildSchema"),

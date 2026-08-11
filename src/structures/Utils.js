@@ -1,9 +1,9 @@
 const {
   Interaction,
+  InteractionCollector,
   MessageButton,
   MessageActionRow,
-  InteractionCollector,
-} = require("discord.js-light");
+} = require("discord.js");
 const Search = require("fuzzysearch-js");
 let levenshteinFS = require("fuzzysearch-js/js/modules/LevenshteinFS");
 let indexOfFS = require("fuzzysearch-js/js/modules/IndexOfFS");

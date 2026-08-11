@@ -1,6 +1,0 @@
-{
-  "owners": [""], 
-  "developmentServerID": "", 
-  "shotstack_env": "", // stage or v1
-  "prefixes": [""]
-}

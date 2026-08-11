@@ -2,7 +2,7 @@ const { deburr } = require("lodash");
 
 class VideoGenerator {
   constructor(port) {
-    this.url = `http://localhost:${port}`;
+    this.url = `http://127.0.0.1:${port}`;
   }
   async curb_your_enthusiasm(url, duration) {
     const path = await this.getResponse("/curb_your_enthusiasm", { url, duration });
